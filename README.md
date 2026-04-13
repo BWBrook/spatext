@@ -19,6 +19,9 @@ recoverability limits and failure regimes explicit rather than hiding them.
 The main scientific statement for the repository lives in
 [`spec/problem_statement.md`](spec/problem_statement.md).
 
+The mathematical modelling contract currently lives in
+[`spec/theory.md`](spec/theory.md).
+
 Two central latent quantities anchor the modelling vision:
 
 - `TP(x)`: arrival time of the hypothesized driver at location `x`
@@ -55,6 +58,9 @@ Key locations:
 
 - [`AGENTS.md`](AGENTS.md): repo-local operating instructions
 - [`spec/problem_statement.md`](spec/problem_statement.md): scientific mission
+- [`spec/theory.md`](spec/theory.md): mathematical model and inference theory
+- [`spec/synth_small_baseline.md`](spec/synth_small_baseline.md): Module 1
+  baseline specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -88,6 +94,37 @@ uv build
 uv run pre-commit run --all-files
 ```
 
+## Implemented baseline module
+
+Module 1 is now implemented as a small synthetic prey-only baseline benchmark.
+It constructs:
+
+- a `25 x 25` square-lattice island domain,
+- a deterministic suitability surface,
+- a suitability-driven carrying-capacity surface,
+- a prey-only equilibrium abundance surface,
+- convergence diagnostics and occupancy summaries,
+- an auditable artifact bundle for inspection.
+
+The main implementation entrypoints are:
+
+- [`src/spatext/spatial.py`](src/spatext/spatial.py): graph-based spatial domain
+  primitives
+- [`src/spatext/synth/small/baseline.py`](src/spatext/synth/small/baseline.py):
+  `synth-small` baseline configuration, simulation, and artifact export
+- [`scripts/build_synth_small_baseline.py`](scripts/build_synth_small_baseline.py):
+  command-line utility for emitting a baseline bundle
+
+To generate the baseline artifact bundle locally:
+
+```bash
+uv run python scripts/build_synth_small_baseline.py \
+  --output-dir artifacts/synth_small_baseline
+```
+
+That command writes JSON, CSV, NPZ, and SVG artifacts for downstream
+inspection and later synthetic modules.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -104,6 +141,7 @@ inherit legacy exploratory structure just because it existed elsewhere.
 ## Status notes
 
 - The initial package and quality-tooling scaffold is in place.
+- Module 1 `synth-small` baseline generation is implemented and verified.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

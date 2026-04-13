@@ -150,3 +150,235 @@ Create a Git commit and push the changes completed so far.
 
 The repository state up to this point was checkpointed in Git and published to
 the remote repository as the current shared baseline.
+
+### Interaction 6: Theory specification
+
+#### Request
+
+Create `spec/theory.md` as a clean mathematical statement of the modelling
+theory underpinning `spatext`, using `exdyn-sandbox` as the source of the
+current scientific and algorithmic structure.
+
+#### Actions completed
+
+- Mined `exdyn-sandbox` for the core theoretical structure across:
+  process dynamics,
+  driver-arrival construction,
+  predation-field ramping,
+  latent extirpation definitions,
+  observation models,
+  TX estimation,
+  response-side summaries,
+  screening loss,
+  ABC distance,
+  and synthetic validation logic.
+- Wrote `spec/theory.md` as a clean theory note rather than a direct lift from
+  sandbox prose.
+- Made the notation explicit around:
+  `T_P(x)`,
+  `T_X^{true}(x)`,
+  `T_X^{obs}(x)`,
+  latent abundance `N_t(x)`,
+  predation pressure `P_t(x)`,
+  and parameter vector `theta`.
+- Formalised the main mathematical layers using LaTeX:
+  arrival surface and delta offsets,
+  logistic predation ramp,
+  local prey dynamics with Allee effects and predation mortality,
+  dispersal operator,
+  latent first-passage extirpation,
+  observation models,
+  hold-rule TX estimator,
+  response-side summary vector,
+  screening objective,
+  unit-consistent real-data loss,
+  ABC distance,
+  and synthetic twin validation logic.
+- Closed the document by stating the implied module decomposition for future
+  `spatext` implementation work.
+
+#### Outcome
+
+`spatext` now has a dedicated mathematical theory document that can serve as
+the scientific anchor for simulation and inference implementation, separate
+from both tooling specs and the more narrative problem statement.
+
+### Interaction 7: `synth-small` baseline-module specification
+
+#### Request
+
+Define the first substantive synthetic module for `spatext` as a small,
+tractable baseline example whose initial goal is to construct the prey
+landscape at equilibrium before predator introduction.
+
+#### Actions completed
+
+- Wrote `spec/synth_small_baseline.md`.
+- Agreed with the suitability-first design:
+  create habitat/suitability before populating the prey landscape.
+- Scoped the first module to the prey-only baseline phase:
+  no predator,
+  no observation model,
+  no TX estimation,
+  no parameter recovery yet.
+- Specified `synth-small` as a `25 x 25` island benchmark with a fully known
+  static suitability surface and deterministic prey dynamics run to
+  equilibrium.
+- Recommended a square lattice for the first concrete implementation, while
+  requiring the spatial backend to be graph-based and tessellation-agnostic so
+  that hexes can be added later without redesigning the module stack.
+- Specified the preferred boundary treatment for v1:
+  no external source population,
+  no wrap-around,
+  and dispersal defined over valid in-domain neighbors only.
+- Defined the required baseline outputs:
+  domain metadata,
+  suitability,
+  carrying capacity,
+  equilibrium abundance,
+  optional occupancy,
+  and convergence diagnostics.
+- Added structural, dynamical, reproducibility, and visual acceptance
+  criteria.
+
+#### Outcome
+
+`spatext` now has a concrete first-module specification that gives `spat` a
+clear implementation target: build a small, auditable, equilibrium prey
+baseline as the foundation for all later synthetic predator, observation, and
+recovery work.
+
+### Interaction 8: `synth-small` baseline implementation
+
+#### Request
+
+Implement the specification in `spec/synth_small_baseline.md`, with permission
+to adjust the spec only if implementation exposed a real conflict or roadblock.
+
+#### Actions completed
+
+- Implemented a reusable cell-graph spatial backend in `spatext.spatial`.
+- Built the `synth-small` baseline module under `spatext.synth.small` with:
+  deterministic suitability generation,
+  suitability-driven carrying capacity,
+  prey-only equilibrium dynamics,
+  graph-based dispersal on a `25 x 25` square lattice,
+  convergence diagnostics,
+  occupancy derivation,
+  and an auditable result object.
+- Added repository utility script
+  `scripts/build_synth_small_baseline.py` to emit a baseline artifact bundle.
+- Added artifact export for:
+  domain/config/diagnostic JSON,
+  cell and edge CSV files,
+  compressed surface arrays,
+  and SVG plots for suitability, carrying capacity, equilibrium abundance, and
+  occupancy.
+- Added tests covering:
+  structural checks,
+  dynamical acceptance checks,
+  reproducibility,
+  artifact emission,
+  failure-on-nonconvergence,
+  helper utilities,
+  and graph-domain invariants.
+- Added `numpy` as the first runtime dependency to support the first real
+  numerical modelling kernel.
+
+#### Implementation decisions
+
+- Used a symmetric rook-neighbor square graph as the concrete v1 adjacency
+  choice for the `25 x 25` lattice.
+- Kept the spatial API graph-based so that a hex-domain variant can be added
+  later without redesigning the high-level module interface.
+- Emitted plots as SVG via package helpers instead of introducing a plotting
+  dependency such as `matplotlib`, to keep the phase-0 runtime tool surface
+  minimal while still satisfying the visual-output requirement.
+
+#### Deviations from spec
+
+- No substantive spec deviation was required.
+- The implementation resolved unspecified details rather than changing the
+  scientific contract.
+
+#### Verification completed
+
+- `uv run ruff check .`
+- `uv run mypy src tests`
+- `uv run pytest`
+- `uv build`
+- `uv run python scripts/build_synth_small_baseline.py --output-dir /tmp/spatext-synth-small-baseline`
+
+All checks passed, tests reached `100%` coverage for the package, and the
+artifact-emission utility wrote the expected baseline bundle successfully.
+
+#### Outcome
+
+`spatext` now has a working Module 1 baseline implementation that produces one
+clean synthetic truth object `(\mathcal{X}, S, K, N*)` for the prey-only
+equilibrium state, ready to support later predator, observation, TX, and
+recovery modules.
+
+### Interaction 9: `synth-small` inspection and verification specification
+
+#### Request
+
+Define the next work package after baseline implementation: the first
+verification and visualisation tooling for inspecting the emitted `synth-small`
+artifacts.
+
+#### Actions completed
+
+- Wrote `spec/synth_small_inspection.md`.
+- Framed the next module as an inspection layer that sits on top of the
+  existing baseline artifact bundle rather than duplicating baseline
+  generation.
+- Required the tooling to verify artifacts by reloading them from disk, not by
+  reusing a live in-memory result object.
+- Specified the first mandatory human-facing outputs:
+  suitability-led base map inspection,
+  parameter table,
+  diagnostics,
+  surface summaries,
+  and an overall pass/fail verification record.
+- Defined the required inspection outputs under an `inspection/` subdirectory:
+  `verification.json`,
+  `parameters.csv`,
+  `surface_summary.csv`,
+  and `report.md`.
+- Specified the required structural, numerical, and scientific-sanity checks
+  for the baseline bundle.
+- Recommended a simple scriptable Markdown-report workflow with static assets,
+  rather than introducing notebooks or dashboard tooling at this stage.
+- Added testing and acceptance criteria for both valid and corrupted artifact
+  bundles.
+
+#### Outcome
+
+`spatext` now has a concrete specification for the first inspection layer on
+top of the `synth-small` baseline artifacts, giving `spat` a clear next target
+for human-auditable verification and visual review.
+
+### Interaction 10: Post-implementation doc refresh and checkpoint publish
+
+#### Request
+
+Review and update `README.md` and/or `AGENTS.md` as needed after the
+implementation run, then create a Git commit and push it.
+
+#### Actions completed
+
+- Updated `README.md` so the repo front door now reflects the implemented
+  Module 1 baseline, its main entrypoints, and the baseline artifact command.
+- Updated `AGENTS.md` so post-implementation review of `README.md` and
+  `AGENTS.md` becomes an explicit part of the repo workflow.
+- Preserved the user's new `report_log.md` addition and kept the interaction
+  ordering chronological.
+- Bundled the current implemented module, supporting specs, tests, and
+  documentation into a checkpoint commit.
+- Pushed the checkpoint to `origin/main`.
+
+#### Outcome
+
+The repository documentation now matches the implemented baseline module, and
+the current state was published as the next shared checkpoint on GitHub.

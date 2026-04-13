@@ -19,7 +19,10 @@ The working proposition is:
 ## Current authoritative documents
 
 - Scientific framing: [`spec/problem_statement.md`](spec/problem_statement.md)
+- Mathematical theory: [`spec/theory.md`](spec/theory.md)
 - Tooling contract: [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md)
+- Module specs under `spec/`, including
+  [`spec/synth_small_baseline.md`](spec/synth_small_baseline.md)
 - Operational build history: [`spec/report_log.md`](spec/report_log.md)
 
 During the current phase of the repo, `spec/` is the primary design authority.
@@ -86,6 +89,9 @@ that was not actually performed.
   are completed so the repo keeps an auditable progress log.
 - Treat `README.md` as the public orientation document for the current state of
   the repository.
+- After substantial implementation work, review both `README.md` and
+  `AGENTS.md` and update them if the repo's behavior, commands, workflow, or
+  documented module state has changed.
 - Add new spec files in `spec/` when decisions need durable rationale or
   explicit implementation contracts.
 
