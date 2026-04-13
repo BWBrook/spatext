@@ -33,7 +33,8 @@ rather than a one-off case-study codebase.
 
 ## Current project stage
 
-The repository is in early phase-0 buildout. Current priorities are:
+The repository is in early buildout, with the first synthetic baseline and
+inspection workflow now in place. Current priorities are:
 
 - keeping scientific specification separate from implementation,
 - building a clean and testable Python package foundation,
@@ -61,6 +62,8 @@ Key locations:
 - [`spec/theory.md`](spec/theory.md): mathematical model and inference theory
 - [`spec/synth_small_baseline.md`](spec/synth_small_baseline.md): Module 1
   baseline specification
+- [`spec/synth_small_inspection.md`](spec/synth_small_inspection.md): Module 1
+  inspection specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -125,6 +128,40 @@ uv run python scripts/build_synth_small_baseline.py \
 That command writes JSON, CSV, NPZ, and SVG artifacts for downstream
 inspection and later synthetic modules.
 
+## Implemented inspection module
+
+Module 1 now also includes a disk-first inspection layer for auditing an
+existing baseline artifact bundle. It:
+
+- reloads the baseline bundle from disk,
+- verifies structural, numerical, and scientific-sanity checks,
+- flattens the generating configuration into a readable parameter table,
+- summarizes the core spatial surfaces,
+- renders a compact Markdown inspection report that links back to the emitted
+  SVG artifacts.
+
+The main inspection entrypoints are:
+
+- [`src/spatext/synth/small/inspect.py`](src/spatext/synth/small/inspect.py):
+  artifact loading, verification, summary-table generation, and Markdown
+  report rendering
+- [`scripts/inspect_synth_small_baseline.py`](scripts/inspect_synth_small_baseline.py):
+  command-line utility for inspecting an existing baseline bundle
+
+To inspect an existing baseline artifact bundle locally:
+
+```bash
+uv run python scripts/inspect_synth_small_baseline.py \
+  --artifact-dir artifacts/synth_small_baseline
+```
+
+That command writes an `inspection/` subdirectory containing:
+
+- `verification.json`
+- `parameters.csv`
+- `surface_summary.csv`
+- `report.md`
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -142,6 +179,8 @@ inherit legacy exploratory structure just because it existed elsewhere.
 
 - The initial package and quality-tooling scaffold is in place.
 - Module 1 `synth-small` baseline generation is implemented and verified.
+- Module 1 `synth-small` inspection and verification is implemented and
+  verified.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

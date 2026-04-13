@@ -22,7 +22,8 @@ The working proposition is:
 - Mathematical theory: [`spec/theory.md`](spec/theory.md)
 - Tooling contract: [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md)
 - Module specs under `spec/`, including
-  [`spec/synth_small_baseline.md`](spec/synth_small_baseline.md)
+  [`spec/synth_small_baseline.md`](spec/synth_small_baseline.md) and
+  [`spec/synth_small_inspection.md`](spec/synth_small_inspection.md)
 - Operational build history: [`spec/report_log.md`](spec/report_log.md)
 
 During the current phase of the repo, `spec/` is the primary design authority.
@@ -54,6 +55,8 @@ plans.
 - Keep tests in `tests/`.
 - Keep small repo utilities in `scripts/`, but do not place core library logic
   there.
+- When verifying artifact contracts, prefer disk-first inspection layers that
+  consume emitted bundles rather than silently reusing live in-memory objects.
 - Do not introduce `pixi`, notebooks, or alternative dependency manifests
   unless a later approved spec justifies them.
 

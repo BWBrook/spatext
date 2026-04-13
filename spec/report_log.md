@@ -382,3 +382,117 @@ implementation run, then create a Git commit and push it.
 
 The repository documentation now matches the implemented baseline module, and
 the current state was published as the next shared checkpoint on GitHub.
+
+### Interaction 11: `synth-small` inspection implementation
+
+#### Request
+
+Implement the specification in `spec/synth_small_inspection.md`.
+
+#### Actions completed
+
+- Implemented a new inspection layer under `spatext.synth.small.inspect`.
+- Added disk-first artifact loading for the existing baseline bundle:
+  required-file checks,
+  JSON/CSV loading,
+  NPZ surface loading,
+  and typed bundle assembly.
+- Implemented structural, numerical, and scientific-sanity verification for:
+  shape consistency,
+  graph consistency,
+  suitability bounds,
+  positive carrying capacity,
+  valid equilibrium abundance,
+  binary occupancy,
+  convergence diagnostics,
+  summary consistency,
+  and non-degenerate benchmark structure.
+- Added deterministic generation of:
+  `inspection/verification.json`,
+  `inspection/parameters.csv`,
+  `inspection/surface_summary.csv`,
+  and `inspection/report.md`.
+- Rendered the Markdown inspection report with:
+  overview,
+  verification table,
+  domain summary,
+  flattened parameter table,
+  diagnostics table,
+  surface summary table,
+  and relative links to the existing SVG figures.
+- Added repository utility script
+  `scripts/inspect_synth_small_baseline.py` as the CLI entrypoint for
+  inspecting an on-disk baseline bundle.
+- Exported the new inspection types and functions through
+  `spatext.synth.small`.
+- Added tests covering:
+  successful inspection output generation,
+  deterministic parameter-table rendering,
+  missing-file failure,
+  shape mismatch detection,
+  out-of-bounds suitability detection,
+  non-binary occupancy detection,
+  and inconsistent summary detection.
+- Reviewed and updated `README.md` and `AGENTS.md` so the repo front door and
+  workflow guide reflect the new inspection module.
+
+#### Implementation decisions
+
+- Kept the inspection workflow strictly disk-first so it validates the artifact
+  contract rather than a live in-memory result object.
+- Interpreted "fail loudly" in a two-tier way:
+  missing or unreadable required inputs raise immediately,
+  while readable-but-inconsistent bundles still emit inspection outputs with a
+  clear failed verification record.
+- Hardened the verification path so malformed but loadable bundles do not
+  crash the checker during arithmetic; instead they surface as explicit failed
+  checks.
+
+#### Deviations from spec
+
+- No substantive spec change was required.
+- The implementation clarified ambiguous failure semantics rather than
+  changing the inspection contract itself.
+
+#### Verification completed
+
+- `uv run ruff format .`
+- `uv run ruff check .`
+- `uv run mypy src tests`
+- `uv run pytest`
+- `uv build`
+- `uv run python scripts/build_synth_small_baseline.py --output-dir /tmp/...`
+- `uv run python scripts/inspect_synth_small_baseline.py --artifact-dir /tmp/...`
+
+All checks passed. The package quality lane is green, all `18` tests passed,
+coverage remained above the configured threshold, the package built
+successfully, and the inspection CLI successfully verified a freshly emitted
+baseline bundle from disk.
+
+#### Outcome
+
+`spatext` now has the first reusable artifact-inspection workflow in place:
+Module 1 baseline bundles can be reloaded, audited, summarized, and rendered
+into a compact human-readable report without rerunning the model itself.
+
+### Interaction 12: Publish `synth-small` inspection checkpoint
+
+#### Request
+
+Create a bundled Git commit for the completed inspection work and push it to
+the remote repository.
+
+#### Actions completed
+
+- Reviewed the current worktree to confirm the pending changes were the
+  expected `synth-small` inspection implementation, tests, and doc updates.
+- Added the new inspection module, CLI entrypoint, test coverage, README and
+  AGENTS updates, and the corresponding report-log entries to the Git index.
+- Created a bundled checkpoint commit for the completed inspection milestone.
+- Pushed the updated `main` branch to `origin`.
+
+#### Outcome
+
+The `synth-small` inspection layer and its documentation are now checkpointed
+in Git and published to the remote repository as the next shared project
+baseline.
