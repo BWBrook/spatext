@@ -1,0 +1,65 @@
+[build-system]
+requires = ["uv_build>=0.11.6,<0.12"]
+build-backend = "uv_build"
+
+[project]
+name = "spatext"
+version = "0.1.0"
+description = "Response-only spatiotemporal extinction inference toolkit."
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+license = { file = "LICENSE" }
+authors = [{ name = "Barry W. Brook" }]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/BWBrook/spatext"
+Repository = "https://github.com/BWBrook/spatext"
+Issues = "https://github.com/BWBrook/spatext/issues"
+
+[dependency-groups]
+lint = ["ruff>=0.15.10"]
+test = [
+  "hypothesis>=6.140.0",
+  "pytest>=8.4.0",
+  "pytest-cov>=6.1.0",
+]
+type = ["mypy>=1.15.0"]
+dev = [
+  { include-group = "lint" },
+  { include-group = "test" },
+  { include-group = "type" },
+  "pre-commit>=4.2.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = [
+  "--import-mode=importlib",
+  "--strict-config",
+  "--strict-markers",
+  "--cov=spatext",
+  "--cov-branch",
+  "--cov-report=term-missing",
+  "--cov-fail-under=90",
+]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+packages = ["spatext"]
+
+[tool.coverage.run]
+branch = true
+source = ["spatext"]
