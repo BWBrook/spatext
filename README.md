@@ -64,6 +64,8 @@ Key locations:
   baseline specification
 - [`spec/synth_small_inspection.md`](spec/synth_small_inspection.md): Module 1
   inspection specification
+- [`spec/synth_small_predator_truth.md`](spec/synth_small_predator_truth.md):
+  deterministic predator-response truth specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -162,6 +164,44 @@ That command writes an `inspection/` subdirectory containing:
 - `surface_summary.csv`
 - `report.md`
 
+## Implemented predator-truth module
+
+Module 1 now also includes the first deterministic predator-response truth
+module built on top of the prey-only baseline. It produces:
+
+- a west-to-east driver-arrival surface `T_P(x)`,
+- a deterministic predator-pressure trajectory `P_t(x)`,
+- a prey abundance trajectory `N_t(x)` after predator introduction,
+- a latent true extirpation surface `T_X^true(x)`,
+- an extirpation-lag surface for extirpated cells,
+- a self-contained artifact bundle for downstream inspection tooling.
+
+The current default interpretation is an exogenous generalist-predator wave:
+
+- west-to-east arrival with a bounded pressure ramp,
+- a Type II per-capita prey mortality response,
+- an absolute quasi-extinction threshold for `T_X^true(x)`,
+- no default Allee effect in this deterministic v1 benchmark.
+
+The main predator-truth entrypoints are:
+
+- [`src/spatext/synth/small/predator.py`](src/spatext/synth/small/predator.py):
+  deterministic predator arrival, pressure ramping, prey response,
+  extirpation timing, and artifact export
+- [`scripts/build_synth_small_predator_truth.py`](scripts/build_synth_small_predator_truth.py):
+  command-line utility for emitting a predator-truth bundle
+
+To generate the predator-truth artifact bundle locally:
+
+```bash
+uv run python scripts/build_synth_small_predator_truth.py \
+  --output-dir artifacts/synth_small_predator_truth
+```
+
+That command writes JSON, CSV, NPZ, and SVG artifacts for the full latent
+driver-response truth object, including surfaces and full deterministic
+trajectories.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -181,6 +221,8 @@ inherit legacy exploratory structure just because it existed elsewhere.
 - Module 1 `synth-small` baseline generation is implemented and verified.
 - Module 1 `synth-small` inspection and verification is implemented and
   verified.
+- Module 1 `synth-small` deterministic predator-response truth is implemented,
+  verified, and executable as a repo-local artifact build.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

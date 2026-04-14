@@ -496,3 +496,482 @@ the remote repository.
 The `synth-small` inspection layer and its documentation are now checkpointed
 in Git and published to the remote repository as the next shared project
 baseline.
+
+### Interaction 13: `synth-small` first review-run specification
+
+#### Request
+
+Define the next immediate task after inspection implementation: run the
+complete `synth-small` baseline-plus-inspection workflow end to end so the
+user can perform the first manual inspection pass on real generated artifacts.
+
+#### Actions completed
+
+- Wrote `spec/synth_small_first_review_run.md`.
+- Framed the next task as an execution-and-staging step rather than as new
+  model development.
+- Specified a canonical review-bundle target at
+  `artifacts/synth_small_first_review`.
+- Directed `spat` to use the existing repository CLI entrypoints for:
+  environment sync,
+  baseline artifact generation,
+  and inspection of the generated bundle.
+- Defined the required review outputs, including the nested inspection bundle
+  with `verification.json`, `parameters.csv`, `surface_summary.csv`, and
+  `report.md`.
+- Added success conditions around a passing verification record and a clearly
+  readable inspection report.
+- Specified failure handling so failed verification is reported honestly rather
+  than masked by speculative edits.
+- Required the exact output path and run outcome to be recorded in
+  `spec/report_log.md` after execution.
+
+#### Outcome
+
+`spatext` now has an explicit execution spec for producing the first canonical
+`synth-small` review bundle, giving `spat` a clear next step before further
+model expansion.
+
+### Interaction 14: Canonical `synth-small` first review run
+
+#### Request
+
+Execute `spec/synth_small_first_review_run.md`: generate one canonical bundle
+at `artifacts/synth_small_first_review`, run the existing inspection script
+over it, require a passing `inspection/verification.json`, and record the
+exact output path for the first manual review pass.
+
+#### Actions completed
+
+- Added the minimal artifact-hygiene rule `artifacts/` to `.gitignore` so the
+  repo-local review bundle would not create avoidable worktree clutter.
+- Executed the requested command sequence via the existing repository
+  entrypoints:
+  `uv sync --all-groups`
+  `uv run python scripts/build_synth_small_baseline.py --output-dir artifacts/synth_small_first_review`
+  `uv run python scripts/inspect_synth_small_baseline.py --artifact-dir artifacts/synth_small_first_review`
+- Confirmed that the canonical output directory now exists at the repo-local
+  path:
+  `artifacts/synth_small_first_review`
+- Confirmed that the inspection outputs now exist at:
+  `artifacts/synth_small_first_review/inspection/verification.json`
+  `artifacts/synth_small_first_review/inspection/report.md`
+  `artifacts/synth_small_first_review/inspection/parameters.csv`
+  `artifacts/synth_small_first_review/inspection/surface_summary.csv`
+- Confirmed that the four baseline SVG figures exist:
+  `suitability.svg`
+  `carrying_capacity.svg`
+  `equilibrium_abundance.svg`
+  `equilibrium_occupancy.svg`
+- Loaded the emitted `verification.json` and confirmed that it reports
+  `"passed": true`.
+- Confirmed that the two CSV inspection tables are non-empty and that the
+  report file was written successfully.
+
+#### Exact output paths
+
+- Bundle directory:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_first_review`
+- Inspection report:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_first_review/inspection/report.md`
+- Verification record:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_first_review/inspection/verification.json`
+- Suitability figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_first_review/suitability.svg`
+- Carrying-capacity figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_first_review/carrying_capacity.svg`
+- Equilibrium-abundance figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_first_review/equilibrium_abundance.svg`
+- Equilibrium-occupancy figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_first_review/equilibrium_occupancy.svg`
+
+#### Run outcome
+
+- Verification passed: `true`
+- Verification check count: `9`
+- Blockers encountered: none
+- Warnings encountered: none
+- Hygiene adjustment made: added `artifacts/` to `.gitignore`
+
+#### Outcome
+
+The first canonical `synth-small` review bundle is now staged on disk and
+ready for the user's first manual inspection pass, with a passing verification
+record and direct paths recorded here for immediate access.
+
+### Interaction 15: `synth-small` deterministic predator-truth specification
+
+#### Request
+
+Define the next modelling work package after the first successful baseline
+review: introduce the predator onto the existing `synth-small` landscape and
+build the first full deterministic driver-response truth module.
+
+#### Actions completed
+
+- Wrote `spec/synth_small_predator_truth.md`.
+- Chose deterministic predator introduction as the next increment, explicitly
+  postponing stochastic prey dynamics to a later robustness phase.
+- Required the module to reuse the existing prey-only baseline as the initial
+  state rather than forking baseline logic.
+- Specified the predator as an exogenous generalist driver represented by:
+  arrival surface `T_P(x)`,
+  bounded time-varying pressure `P_t(x)`,
+  and no numerical feedback from focal-prey decline onto predator spread.
+- Chose a western-boundary source geometry and graph-distance arrival
+  construction for the default synthetic invasion front.
+- Set Type III predation mortality as the required default prey-response form,
+  while keeping the broader design open to later alternatives.
+- Required the module to generate the first latent true extirpation surface
+  `T_X^{true}(x)` and the corresponding lag surface.
+- Defined a self-contained artifact bundle including surface arrays,
+  full trajectories, cell-level exports, summary diagnostics, and core SVG
+  outputs.
+- Added testing and acceptance criteria aimed at a deterministic, reproducible,
+  non-degenerate synthetic benchmark with both extirpated and surviving cells.
+
+#### Outcome
+
+`spatext` now has a concrete specification for the first deterministic
+predator-response truth module, giving `spat` a clear next target before any
+stochasticity or observation-layer work is added.
+
+### Interaction 16: Deterministic predator-truth implementation and run
+
+#### Request
+
+Implement the specification in `spec/synth_small_predator_truth.md` and
+execute it so the generated artifacts can be examined directly.
+
+#### Actions completed
+
+- Implemented a new deterministic predator-response module under
+  `spatext.synth.small.predator`.
+- Reused the existing prey-only baseline programmatically as the initial
+  condition rather than duplicating baseline logic.
+- Implemented graph-native predator arrival from the western boundary to
+  create the latent driver-arrival surface `T_P(x)`.
+- Implemented deterministic post-arrival predator-pressure ramping to create
+  the pressure trajectory `P_t(x)`.
+- Implemented deterministic prey decline using the existing baseline
+  demography kernel with an added Type III predation mortality term.
+- Implemented latent true extirpation timing `T_X^{true}(x)` using the
+  threshold rule based on local carrying capacity and baseline abundance.
+- Implemented the extirpation-lag surface for extirpated cells.
+- Implemented artifact emission for the predator-truth bundle, including:
+  `domain.json`,
+  `baseline_config.json`,
+  `predator_config.json`,
+  `diagnostics.json`,
+  `summary.json`,
+  `cells.csv`,
+  `surfaces.npz`,
+  `trajectories.npz`,
+  and six SVG figures.
+- Added the repository entrypoint
+  `scripts/build_synth_small_predator_truth.py`.
+- Exported the new predator-truth API through `spatext.synth.small`.
+- Added tests covering:
+  successful deterministic execution,
+  reproducibility,
+  artifact emission,
+  missing-or-finite extirpation semantics,
+  and failure on invalid configuration values.
+- Tuned the default predator-response regime so the benchmark now yields a
+  mixed outcome with both extirpated and surviving cells by the end of the
+  run.
+- Updated `README.md` and `AGENTS.md` so the repo front door and operating
+  guide reflect the new module and its command-line entrypoint.
+
+#### Implementation decisions
+
+- Kept the predator exogenous in v1 by representing it through arrival time
+  and pressure rather than as an endogenous predator population state.
+- Used a Type III predation response as the default mortality form, as
+  specified.
+- Stored non-extirpated cells as missing values in `true_extirpation` and
+  `extirpation_lag`, using `NaN` in the NPZ surfaces and blank fields in
+  `cells.csv`.
+- Stored the full deterministic prey and predator-pressure trajectories in
+  `trajectories.npz` because the `25 x 25` benchmark is small and the audit
+  value is high.
+
+#### Deviations from spec
+
+- No substantive spec change was required.
+- The implementation only resolved tuning choices needed to reach the
+  intended mixed default regime.
+
+#### Verification completed
+
+- `uv run ruff check .`
+- `uv run mypy src tests`
+- `uv run pytest`
+- `uv build`
+- `uv run python scripts/build_synth_small_predator_truth.py --output-dir artifacts/synth_small_predator_truth`
+
+All checks passed. The repo quality lane is green, all `23` tests passed,
+coverage remained above the configured threshold, the package built
+successfully, and the predator-truth artifact build completed without runtime
+warnings or numerical failure.
+
+#### Canonical output paths
+
+- Bundle directory:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth`
+- Summary:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/summary.json`
+- Diagnostics:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/diagnostics.json`
+- Surfaces archive:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/surfaces.npz`
+- Trajectories archive:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/trajectories.npz`
+- Suitability figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/suitability.svg`
+- Initial-abundance figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/initial_abundance.svg`
+- Driver-arrival figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/driver_arrival.svg`
+- True-extirpation figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/true_extirpation.svg`
+- Extirpation-lag figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/extirpation_lag.svg`
+- Final-abundance figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/final_abundance.svg`
+
+#### Run outcome
+
+- Extirpated fraction: `0.3328`
+- Surviving fraction: `0.6672`
+- Driver-arrival range: `4` to `28`
+- Finite lag range: `6` to `14`
+- Stayed finite: `true`
+- Stayed nonnegative: `true`
+- Additional artifact-hygiene adjustment needed for this run: none
+
+#### Outcome
+
+`spatext` now has the first full deterministic driver-response truth object in
+place for `synth-small`, and one canonical predator-truth bundle is staged on
+disk for direct scientific inspection of arrival, lag, extirpation, and final
+abundance structure.
+
+### Interaction 17: Predator-truth visualisation scale and legend refresh
+
+#### Request
+
+Adjust the generated predator-truth visualisations so that directly
+comparable surfaces use locked colour scales across time and add a visible
+colour scale bar to each image, then regenerate the relevant figures.
+
+#### Actions completed
+
+- Updated the predator-truth SVG writer so it now supports fixed
+  `color_min` and `color_max` values instead of always rescaling to each
+  surface independently.
+- Added a coloured scale bar with explicit minimum and maximum labels to each
+  predator-truth numeric SVG figure.
+- Added a missing-value key to figures that contain `NaN` surfaces, such as
+  true extirpation and extirpation lag.
+- Locked the abundance comparison figures to a shared scale spanning the full
+  range across:
+  `initial_abundance.svg`
+  `final_abundance.svg`
+- Locked the absolute-time figures to a shared scale spanning the full range
+  across:
+  `driver_arrival.svg`
+  `true_extirpation.svg`
+- Kept `extirpation_lag.svg` on its own shared lag scale with a matching
+  colour bar.
+- Added test coverage to verify that the emitted SVGs now include the common
+  scale text and scale-bar elements for these comparisons.
+- Regenerated the canonical predator-truth artifact bundle so the figures on
+  disk reflect the updated visualisation contract.
+
+#### Verification completed
+
+- `uv run ruff check .`
+- `uv run mypy src tests`
+- `uv run pytest`
+- `uv build`
+- `uv run python scripts/build_synth_small_predator_truth.py --output-dir artifacts/synth_small_predator_truth`
+
+All checks passed. The repo quality lane remained green, and the regenerated
+SVGs now advertise the intended shared scales and visible colour legends.
+
+#### Refreshed figure paths
+
+- Initial abundance:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/initial_abundance.svg`
+- Final abundance:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/final_abundance.svg`
+- Driver arrival:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/driver_arrival.svg`
+- True extirpation:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/true_extirpation.svg`
+- Extirpation lag:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/extirpation_lag.svg`
+
+#### Outcome
+
+The predator-truth figures are now better suited for direct visual
+comparison: abundance surfaces no longer hide decline through independent
+rescaling, time-valued surfaces share a common temporal legend, and each SVG
+now includes an explicit colour bar for viewer interpretation.
+
+### Interaction 18: Predator-truth vulnerability revision after first artifact review
+
+#### Request
+
+Review the predator-truth artifact interpretation after the first scientific
+inspection discussion, then revise the module so it no longer encodes naturally
+low-density prey cells as systematically safer by default. The agreed direction
+was:
+
+- replace the current Type III default with a Type II default more consistent
+  with an exogenous generalist predator,
+- replace the locally scaled extirpation threshold with an absolute
+  quasi-extinction threshold for deterministic runs,
+- regenerate the canonical predator-truth bundle,
+- log the scientific reasoning and implementation choices for traceability.
+
+#### Scientific diagnosis from the review discussion
+
+The first predator-truth run revealed an undesirable default property:
+
+- low-density prey cells were protected twice,
+- Type III mortality reduced per-capita impact at low focal-prey abundance,
+- the cell-wise extirpation threshold also became lower in low-density cells,
+- together these choices made sparse cells less likely to extirpate than denser
+  cells.
+
+That behaviour was coherent mathematically but misaligned with the intended
+scientific story for this module: an exogenous generalist predator wave whose
+pressure is not numerically coupled to the focal prey and therefore should not
+hand the focal prey an automatic low-density refuge.
+
+#### Actions completed
+
+- Replaced the predator-response default from Type III to Type II in
+  `src/spatext/synth/small/predator.py`, using a per-capita mortality form that
+  remains strong when focal prey are scarce rather than attenuating sharply at
+  low abundance.
+- Replaced the previous cell-wise threshold rule
+  `min(phi K(x), rho N0(x))` with an absolute quasi-extinction threshold for the
+  deterministic v1 predator-truth module.
+- Tuned the revised deterministic default to a mixed regime with:
+  `predation_scale = 1.0`,
+  `half_saturation = 6.0`,
+  `quasi_extirpation_abundance = 3.0`.
+- Kept the current no-Allee default in place for this module, treating explicit
+  low-density collapse amplification as a later realism layer rather than a
+  required component of deterministic v1.
+- Expanded the predator-truth artifact export so the extirpation threshold is
+  now auditable in both:
+  `surfaces.npz`
+  `cells.csv`
+- Added diagnostics fields recording both the response form and the threshold
+  form/value.
+- Added summary fields for the extirpation-threshold surface.
+- Strengthened the predator-truth tests so they now check the revised
+  vulnerability pattern and the constant-threshold export.
+- Updated `spec/synth_small_predator_truth.md` so the authoritative module spec
+  now matches the revised implementation rather than preserving an outdated Type
+  III / locally scaled threshold contract.
+- Reviewed `README.md` after implementation and updated the predator-truth
+  section to describe the current Type II plus absolute quasi-extinction
+  interpretation.
+- Reviewed `AGENTS.md`; no repo-local operating-guide change was needed because
+  the workflow rules did not change.
+
+#### Explicit spec revision
+
+This interaction deliberately revised the earlier predator-truth default
+specification.
+
+Previous default:
+
+- Type III predation response,
+- cell-wise extirpation threshold based on local carrying capacity and initial
+  abundance.
+
+Revised default:
+
+- Type II predation response,
+- absolute quasi-extinction threshold.
+
+Reason for the revision:
+
+- the first review run showed that the previous defaults hard-coded a scarcity
+  refuge that was at odds with the intended ecological story for an exogenous
+  generalist predator,
+- the revised defaults better align the synthetic truth object with the
+  scientific expectation that naturally sparse cells should not automatically be
+  safer under arrival of a generalist predator wave.
+
+#### Verification completed
+
+- `uv run ruff check .`
+- `uv run mypy src tests`
+- `uv run pytest`
+- `uv build`
+- `uv run python scripts/build_synth_small_predator_truth.py --output-dir artifacts/synth_small_predator_truth`
+
+All checks passed. The repo quality lane remained green, all `24` tests passed,
+coverage remained above the configured threshold at `94.48%`, the package built
+successfully, and the refreshed predator-truth bundle was regenerated without
+numerical failure.
+
+#### Refreshed canonical output paths
+
+- Bundle directory:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth`
+- Summary:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/summary.json`
+- Diagnostics:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/diagnostics.json`
+- Surfaces archive:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/surfaces.npz`
+- Trajectories archive:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/trajectories.npz`
+- Driver-arrival figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/driver_arrival.svg`
+- True-extirpation figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/true_extirpation.svg`
+- Extirpation-lag figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/extirpation_lag.svg`
+- Final-abundance figure:
+  `/home/bwbrook/papers/spatext/artifacts/synth_small_predator_truth/final_abundance.svg`
+
+#### Refreshed run outcome
+
+- Predation response form: `type_ii`
+- Extirpation-threshold form: `absolute_quasi_extinction`
+- Quasi-extinction abundance: `3.0`
+- Extirpated fraction: `0.4032`
+- Surviving fraction: `0.5968`
+- Driver-arrival range: `4` to `28`
+- True-extirpation range: `15` to `52`
+- Finite lag range: `11` to `41`
+- Stayed finite: `true`
+- Stayed nonnegative: `true`
+- Additional clipping used: `false`
+
+#### Interpreted pattern after revision
+
+The regenerated run now expresses the intended vulnerability direction much more
+clearly:
+
+- extirpation is concentrated toward the western side where predator arrival is
+  earliest,
+- lower-initial-abundance cells are now more prone to extirpation than higher
+  ones under the default deterministic truth settings,
+- quartile-level extirpation rates across increasing initial-abundance bins are:
+  `0.994`, `0.538`, `0.077`, `0.0`,
+- the first five columns contain `112` extirpated cells, while the last five
+  contain only `12`.
+
+That revised pattern is not the final ecological truth model, but it is a much
+better deterministic benchmark for the next rounds of inspection and synthetic
+observation work.
