@@ -975,3 +975,56 @@ clearly:
 That revised pattern is not the final ecological truth model, but it is a much
 better deterministic benchmark for the next rounds of inspection and synthetic
 observation work.
+
+### Interaction 19: Mac Mini dev-box handover preparation
+
+#### Request
+
+Prepare for moving `spatext` work from the current WSL environment to Barry's
+Mac Mini development box by creating a detailed handover document for the
+counterpart agent there. Include current repo state, continuation guidance, and
+artifact-transfer considerations.
+
+#### Actions completed
+
+- Refreshed `origin` and confirmed that local `main` still matches
+  `origin/main` at:
+  `f639afd9fd5a2eaf7fd767218749df9e9ee13d96`
+- Confirmed the working tree was clean before creating the handover document.
+- Checked the current SSH configuration and identified the Mac Mini aliases:
+  `dev-box-ts`
+  `barrys-mac-mini`
+- Ran a bounded non-interactive SSH probe to `dev-box-ts`, confirming access to
+  the Mac Mini host `Mac-mini.lan` with home directory `/Users/bwbrook`.
+- Searched common Mac-side checkout locations and did not find an existing
+  `spatext` repository there.
+- Checked the locally generated ignored artifact directories and recorded their
+  approximate sizes:
+  `artifacts/synth_small_first_review` at about `360K`
+  `artifacts/synth_small_predator_truth` at about `700K`
+- Created `spec/devbox_handover.md`.
+
+#### Handover contents
+
+The new handover document records:
+
+- the canonical GitHub repository and latest verified commit,
+- clone or fast-forward instructions for the Mac Mini,
+- `uv` setup and verification commands,
+- repo operating rules from `AGENTS.md`,
+- implemented module state for baseline, inspection, first review run, and
+  predator truth,
+- the scientific rationale for the Type II plus absolute quasi-extinction
+  predator-truth revision,
+- artifact regeneration commands,
+- optional WSL-to-Mac `rsync` commands if exact local artifacts need to be
+  copied after the dev-box checkout exists,
+- likely next work packages and watch points for the next agent.
+
+#### Outcome
+
+The Mac Mini counterpart agent now has a durable repo-local handover document at
+`spec/devbox_handover.md`. The document favors regenerating ignored artifacts on
+the dev box after clone or fast-forward, while also preserving exact copy
+commands for the current WSL artifact bundles if continuity of SVG/NPZ/CSV files
+is desired.
