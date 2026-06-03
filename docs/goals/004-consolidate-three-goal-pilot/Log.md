@@ -5,7 +5,7 @@
 Drafted by supervisor on 2026-06-03 after Barry approved consolidation-first
 publication for the completed Goals 001-003 pilot.
 
-Not yet executed by `mink`.
+Completed by `mink` on 2026-06-03.
 
 ## Why This Goal
 
@@ -25,9 +25,19 @@ layer begins.
 - [x] Validation lane passed
 - [x] Exact staging reviewed
 - [x] Pre-commit passed on staged/new files
-- [ ] Commit created
-- [ ] Push completed
-- [ ] Final status reported
+- [x] Commit created
+- [x] Push completed
+- [x] Final status reported
+
+## 2026-06-03 Commit/Push Completion
+
+- Commit SHA: `cf7b437895f51b3b735ef6e58a5fedd7c0c93e06`
+- Commit message: `feat: add synth-small observation readiness workflow`
+- Pushed to `origin/main` successfully.
+- Verified after push: `main...origin/main` (aligned).
+- Final git state: tracked/untracked state clean; only ignored generated/test
+  artifacts remain (`artifacts/`, `dist/`, `.coverage`, `.hypothesis/`,
+  `.mypy_cache/`, `.pytest_cache/`, `.ruff_cache/`, `.venv/`, `__pycache__/`).
 
 ## 2026-06-03 Audit and Hygiene
 
@@ -73,7 +83,7 @@ layer begins.
   `git diff --cached --stat` matched the Goal 004 expected path set.
 - Ran `uv run pre-commit run --all-files` on staged content:
   - all hooks passed.
-- Outstanding checkpoint: commit/push pending successful staging review.
+- Outcome completed: commit/push and final status recorded in this section.
 
 ## Supervisor Notes
 
@@ -82,3 +92,8 @@ staging is confirmed.
 
 Do not stage ignored generated artefacts. Do not start response-only
 extirpation reconstruction, ABC, POM, fitting, or inference in this goal.
+
+## 2026-06-03 Recommended next science step
+
+Continue with response-only `T_X^obs` reconstruction and hidden-truth
+comparison before starting ABC/POM.
