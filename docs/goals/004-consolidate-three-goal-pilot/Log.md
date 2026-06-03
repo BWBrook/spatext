@@ -68,7 +68,7 @@ layer begins.
   - `jq '{passed}' artifacts/synth_small_predator_truth/inspection/verification.json`
   - `jq '{recommendation: .recommendation, default_classification: .default_candidate.readiness_classification}' artifacts/synth_small_predator_truth_sensitivity/readiness.json`
   - `jq '{passed}' artifacts/synth_small_observations/inspection/verification.json`
-  - `jq '{passed, finite_metrics: ([.metrics[] | type == "number\"] | all)}' artifacts/synth_small_observations/inspection/recoverability_smoke.json`
+  - `jq '{passed, finite_metrics: ([.metrics[] | type == "number"] | all)}' artifacts/synth_small_observations/inspection/recoverability_smoke.json`
   - `test -s artifacts/synth_small_observations/inspection/report.md`
   - `uv run ruff format --check .`
   - `uv run ruff check .`
