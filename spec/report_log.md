@@ -1028,3 +1028,424 @@ The Mac Mini counterpart agent now has a durable repo-local handover document at
 the dev box after clone or fast-forward, while also preserving exact copy
 commands for the current WSL artifact bundles if continuity of SVG/NPZ/CSV files
 is desired.
+
+### Interaction 20: Mac Mini dev-box clone and verification
+
+#### Request
+
+Clone `BWBrook/spatext` into the empty Mac-side folder and review the repository
+using the handover document as the orientation guide.
+
+#### Actions completed
+
+- Confirmed the working directory was the empty target folder:
+  `/Users/bwbrook/papers/spatext`.
+- Cloned `BWBrook/spatext` directly into that folder.
+- Confirmed the live host was the intended Mac Mini target:
+  `Barry's Mac mini` / `Mac-mini.lan`, macOS `26.5`, `arm64`.
+- Read the repo-local operating guide, README, tooling contract, problem
+  statement, report log, and `spec/devbox_handover.md`.
+- Confirmed the checkout was clean and aligned with `origin/main` at:
+  `a332c4fd749b5f853e4c85d114952bad496e6a16`
+- Noted that this is one commit newer than the handover's last verified
+  implementation commit because it includes the dev-box handover document.
+- Created a fresh `uv` environment using the pinned CPython `3.14.4`.
+- Ran the full local quality lane:
+  `uv run ruff format --check .`
+  `uv run ruff check .`
+  `uv run mypy src tests`
+  `uv run pytest`
+  `uv build`
+  `uv run pre-commit run --all-files`
+- Regenerated the ignored baseline review bundle and inspection report at:
+  `artifacts/synth_small_first_review`
+- Regenerated the ignored predator-truth bundle at:
+  `artifacts/synth_small_predator_truth`
+
+#### Verification completed
+
+- `uv sync --all-groups` completed successfully and created `.venv` with
+  CPython `3.14.4`.
+- Ruff formatting and lint checks passed.
+- Mypy passed with no issues in `12` source files.
+- Pytest collected and passed all `24` tests.
+- Coverage remained above the configured `90%` gate at `94.48%`.
+- `uv build` created both the source distribution and wheel.
+- Pre-commit hooks passed.
+- Baseline inspection verification passed all checks.
+- Predator-truth regeneration reproduced the expected handover values:
+  extirpated fraction `0.4032`,
+  surviving fraction `0.5968`,
+  driver-arrival range `4` to `28`,
+  true-extirpation range `15` to `52`,
+  finite lag range `11` to `41`,
+  stayed finite `true`,
+  stayed nonnegative `true`,
+  and additional clipping `false`.
+
+#### Review outcome
+
+The Mac Mini checkout is now usable as the active development copy. The
+repository remains in early, spec-led synthetic-validation buildout with three
+implemented pieces: prey-only baseline generation, disk-first baseline
+inspection, and deterministic predator-response truth generation. The most
+natural next work package remains the one identified in the handover: inspect
+the regenerated predator-truth artifacts with Barry, then either tune the
+deterministic truth benchmark or build the predator-truth inspection layer
+before adding the observation model.
+
+### Interaction 21: Predator-truth inspection layer
+
+#### Request
+
+Execute the local project goal under
+`docs/goals/001-predator-truth-inspection/`: create a disk-first inspection and
+review layer for the `synth-small` deterministic predator-response truth
+bundle, update the goal log, produce review artifacts, and verify the result
+without committing or pushing.
+
+#### Actions completed
+
+- Read the goal `Goal.md`, `Plan.md`, `Runbook.md`, and `Log.md`.
+- Confirmed the working state: `main` was tracking `origin/main`,
+  `spec/report_log.md` was already modified from the Mac Mini handover work,
+  and the local goal docs were untracked project state.
+- Ran `uv sync --all-groups` successfully before implementation.
+- Wrote `spec/synth_small_predator_truth_inspection.md`.
+- Added the disk-first predator-truth inspection implementation in
+  `src/spatext/synth/small/predator_inspect.py`.
+- Added the command-line entry point
+  `scripts/inspect_synth_small_predator_truth.py`.
+- Exported the new inspection API from `spatext.synth.small`.
+- Added focused tests in
+  `tests/test_synth_small_predator_truth_inspection.py` covering:
+  valid bundles, missing files, corrupted NPZ inputs, extirpation-before-arrival
+  inconsistency, trajectory endpoint mismatch, and inconsistent summary values.
+- Updated `README.md` and `AGENTS.md` to include the new inspection spec and
+  user-facing command.
+- Updated the local goal log at
+  `docs/goals/001-predator-truth-inspection/Log.md`.
+- Rebuilt the predator-truth artifact bundle and generated the inspection
+  outputs under `artifacts/synth_small_predator_truth/inspection/`.
+
+#### Inspection outputs
+
+The inspection command writes:
+
+- `artifacts/synth_small_predator_truth/inspection/verification.json`
+- `artifacts/synth_small_predator_truth/inspection/parameters.csv`
+- `artifacts/synth_small_predator_truth/inspection/surface_summary.csv`
+- `artifacts/synth_small_predator_truth/inspection/trajectory_summary.csv`
+- `artifacts/synth_small_predator_truth/inspection/extirpation_summary.csv`
+- `artifacts/synth_small_predator_truth/inspection/report.md`
+
+For the current regenerated predator-truth bundle, `verification.json` records
+`passed: true` and `warning_count: 0`.
+
+Key review metrics in the generated report include:
+
+- extirpated fraction: `0.4032`
+- surviving fraction: `0.5968`
+- driver-arrival range: `4` to `28`
+- true-extirpation range: `15` to `52`
+- finite lag range: `11` to `41`
+- low-initial-abundance extirpation rate: `0.993630573248`
+- high-initial-abundance extirpation rate: `0`
+- west-band extirpated count: `112`
+- east-band extirpated count: `12`
+
+#### Verification completed
+
+- `uv sync --all-groups`
+- `uv run pytest tests/test_synth_small_predator_truth_inspection.py --no-cov`
+- `uv run python scripts/build_synth_small_predator_truth.py`
+- `uv run python scripts/inspect_synth_small_predator_truth.py`
+- `uv run ruff format --check .`
+- `uv run ruff check .`
+- `uv run mypy src tests`
+- `uv run pytest`
+- `uv build`
+
+All required checks passed. The full test suite collected `30` tests, all
+passed, and total coverage was `92.82%`, above the configured `90%` gate.
+
+#### Outcome
+
+The predator-truth inspection layer is now implemented, documented, tested, and
+executable as a local artifact review step. The next recommended scientific
+goal is to review the generated predator-truth report with Barry and decide
+whether the deterministic truth benchmark needs parameter tuning before adding
+the first synthetic observation layer.
+
+### Interaction 22: Deterministic benchmark sensitivity and readiness
+
+#### Request
+
+Execute the local project goal under
+`docs/goals/002-deterministic-benchmark-sensitivity/`: produce a small
+deterministic sensitivity and readiness package around the current
+`synth-small` predator-truth default, preserve the existing Goal 001 dirty
+work, update local logs, and verify without committing or pushing.
+
+#### Actions completed
+
+- Read the goal `Goal.md`, `Plan.md`, `Runbook.md`, and `Log.md`.
+- Confirmed the working state: `main` was tracking `origin/main`, Goal 001
+  changes were dirty and preserved, and the Goal 002 docs were local untracked
+  project state.
+- Ran `uv sync --all-groups` successfully before implementation.
+- Confirmed the Goal 001 inspection report existed at
+  `artifacts/synth_small_predator_truth/inspection/report.md`.
+- Wrote `spec/synth_small_predator_truth_sensitivity.md`.
+- Added the local deterministic sensitivity implementation in
+  `src/spatext/synth/small/sensitivity.py`.
+- Added the command-line entry point
+  `scripts/run_synth_small_predator_truth_sensitivity.py`.
+- Exported the sensitivity API from `spatext.synth.small`.
+- Added focused tests in
+  `tests/test_synth_small_predator_truth_sensitivity.py` covering:
+  candidate construction, metric extraction, readiness classification, output
+  writing, memo rendering, and finite scores over the default grid.
+- Updated `README.md` and `AGENTS.md` to include the sensitivity spec and
+  user-facing command.
+- Updated the local goal log at
+  `docs/goals/002-deterministic-benchmark-sensitivity/Log.md`.
+- Ran the default 27-candidate local grid over:
+  `predation_scale in {0.75, 1.0, 1.25}`,
+  `half_saturation in {4.0, 6.0, 8.0}`, and
+  `ramp_duration in {6, 8, 10}`.
+
+#### Sensitivity outputs
+
+The sensitivity command writes:
+
+- `artifacts/synth_small_predator_truth_sensitivity/sweep_results.csv`
+- `artifacts/synth_small_predator_truth_sensitivity/candidate_rankings.csv`
+- `artifacts/synth_small_predator_truth_sensitivity/readiness.json`
+- `artifacts/synth_small_predator_truth_sensitivity/decision_memo.md`
+
+For the current local sweep:
+
+- candidate count: `27`
+- observation-ready candidates: `9`
+- review candidates: `13`
+- not-ready candidates: `5`
+- default candidate classification: `observation_ready`
+- best-ranked candidate: `default`
+- recommendation: `keep_default_for_first_observation_layer`
+
+Default-candidate review metrics:
+
+- predation scale: `1.0`
+- half-saturation: `6.0`
+- ramp duration: `8`
+- extirpated fraction: `0.4032`
+- surviving fraction: `0.5968`
+- finite lag range: `11` to `41`
+- finite lag standard deviation: `7.5891142734`
+- low-initial-abundance extirpation rate: `0.993630573248`
+- high-initial-abundance extirpation rate: `0`
+- west-band extirpated count: `112`
+- east-band extirpated count: `12`
+- non-negative clipping used: `false`
+
+#### Verification completed
+
+- `uv sync --all-groups`
+- `uv run python scripts/build_synth_small_predator_truth.py`
+- `uv run python scripts/inspect_synth_small_predator_truth.py`
+- `uv run python scripts/run_synth_small_predator_truth_sensitivity.py`
+- `uv run pytest tests/test_synth_small_predator_truth_sensitivity.py --no-cov`
+- `uv run ruff format --check .`
+- `uv run ruff check .`
+- `uv run mypy src tests`
+- `uv run pytest`
+- `uv build`
+- `uv run pre-commit run --files $(git ls-files -m -o --exclude-standard)`
+
+All required checks passed. The full test suite collected `36` tests, all
+passed, and total coverage was `92.76%`, above the configured `90%` gate.
+
+#### Outcome
+
+The deterministic sensitivity package is now implemented, documented, tested,
+and executable as a local readiness decision step. Under the current explicit
+criteria, the existing default predator-truth benchmark is classified as
+`observation_ready` and is also the top-ranked candidate in the local sweep.
+The next recommended goal is to add the first synthetic observation layer over
+the approved deterministic truth object.
+
+### Interaction 23: First response-only observation layer
+
+#### Request
+
+Execute the local project goal under
+`docs/goals/003-first-response-observation-layer/`: add the first
+seed-controlled response-only observation layer over the approved
+`synth-small` predator-truth default, preserve the existing Goal 001 and Goal
+002 dirty work, write disk-first inspection and recoverability-smoke artifacts,
+and verify without committing or pushing.
+
+#### Actions completed
+
+- Read `Goal.md`, `Plan.md`, `Runbook.md`, and `Log.md`.
+- Confirmed the working state: `main` was tracking `origin/main`, Goal 001 and
+  Goal 002 changes remained dirty and preserved, and the Goal 003 docs were
+  local untracked project state.
+- Ran `uv sync --all-groups` successfully before implementation.
+- Refreshed upstream predator-truth, predator-truth inspection, and
+  predator-truth sensitivity artifacts.
+- Confirmed the sensitivity decision still classifies the default candidate as
+  `observation_ready` and recommends
+  `keep_default_for_first_observation_layer`.
+- Wrote `spec/synth_small_observations.md`.
+- Added the first observation implementation in
+  `src/spatext/synth/small/observations.py`.
+- Added command-line entry points:
+  `scripts/build_synth_small_observations.py` and
+  `scripts/inspect_synth_small_observations.py`.
+- Exported the observation API from `spatext.synth.small`.
+- Added focused tests in `tests/test_synth_small_observations.py` covering:
+  default-seed reproducibility, required schemas, analyst-facing truth-column
+  exclusion, missing-file inspection failure, malformed detection indicators,
+  and finite recoverability-smoke metrics.
+- Updated `README.md` and `AGENTS.md` to include the new observation spec and
+  user-facing commands.
+- Updated the local goal log at
+  `docs/goals/003-first-response-observation-layer/Log.md`.
+
+#### Observation design
+
+The first observation layer uses the approved default predator-truth object and
+fixed seed `20260530`. All `25 x 25` cells are candidate sites. Survey times
+are every four time steps through the predator-truth simulation horizon, with
+two replicate visits for each sampled site-time. Visit inclusion is incomplete
+and biased by broad west/central/east region plus suitability. Effort is
+positive and varies by region, time, and seed-controlled random noise.
+
+Observed counts are generated from a monotone effort/abundance response:
+
+```text
+Y_v ~ Poisson(lambda_v)
+lambda_v = effort_v * count_scale * N_t(x) /
+  (detection_half_saturation + N_t(x))
+```
+
+The analyst-facing files are `sites.csv`, `visits.csv`, and
+`observations.csv`. They exclude predator arrival, predator pressure, true
+extirpation, extirpation lag, initial abundance, and final abundance. Hidden
+truth is available only in the clearly labelled evaluation file
+`evaluation_truth.csv` plus `truth_reference.json`.
+
+#### Observation outputs
+
+The observation build command writes:
+
+- `artifacts/synth_small_observations/observation_config.json`
+- `artifacts/synth_small_observations/truth_reference.json`
+- `artifacts/synth_small_observations/sites.csv`
+- `artifacts/synth_small_observations/visits.csv`
+- `artifacts/synth_small_observations/observations.csv`
+- `artifacts/synth_small_observations/evaluation_truth.csv`
+
+The inspection command writes:
+
+- `artifacts/synth_small_observations/inspection/verification.json`
+- `artifacts/synth_small_observations/inspection/observation_summary.csv`
+- `artifacts/synth_small_observations/inspection/recoverability_smoke.json`
+- `artifacts/synth_small_observations/inspection/report.md`
+
+For the current local run, the build wrote `10,288` visits/observations.
+
+#### Recoverability smoke result
+
+The disk-first observation inspection passed, and
+`recoverability_smoke.json` reported:
+
+- pre-driver detection rate: `0.8576294277929155`
+- post-driver detection rate: `0.6599564744287268`
+- pre/post detection drop: `0.19767295336418866`
+- late extirpated detection rate: `0.227`
+- late surviving detection rate: `0.7910974499089254`
+- late surviving-minus-extirpated detection-rate difference:
+  `0.5640974499089254`
+- late-detection AUC for extirpated versus surviving sites:
+  `0.8939508196721312`
+
+The smoke test therefore indicates that the noisy response observations retain
+basic signal about latent extirpation. It is not a fitted model and does not
+prove parameter identifiability.
+
+#### Verification completed
+
+- `uv sync --all-groups`
+- `uv run python scripts/build_synth_small_predator_truth.py`
+- `uv run python scripts/inspect_synth_small_predator_truth.py`
+- `uv run python scripts/run_synth_small_predator_truth_sensitivity.py`
+- `uv run python scripts/build_synth_small_observations.py`
+- `uv run python scripts/inspect_synth_small_observations.py`
+- `jq '{passed}' artifacts/synth_small_observations/inspection/verification.json`
+- `jq '{passed, finite_metrics: ([.metrics[] | type == "number"] | all), metrics}' artifacts/synth_small_observations/inspection/recoverability_smoke.json`
+- `test -s artifacts/synth_small_observations/inspection/report.md`
+- `uv run pytest tests/test_synth_small_observations.py --no-cov`
+- `uv run ruff format --check .`
+- `uv run ruff check .`
+- `uv run mypy src tests`
+- `uv run pytest`
+- `uv build`
+- `uv run pre-commit run --files $(git ls-files -m -o --exclude-standard)`
+
+All required checks passed. The full test suite collected `42` tests, all
+passed, and total coverage was `92.47%`, above the configured `90%` gate.
+
+#### Outcome
+
+The three-goal pilot now has a coherent deterministic truth object, a
+readiness decision package, and a first response-only observation layer with
+disk-first inspection and a simple recoverability smoke test. The recommended
+next step is to consolidate this pilot into a small end-to-end synthetic
+pipeline that reconstructs an observed extirpation surface from the
+response-only observations, then compares that reconstructed surface against
+the hidden truth before any ABC/POM machinery is added.
+
+### Interaction 24: Consolidate three-goal synth-small pilot
+
+#### Request
+
+Consolidate Goals 001-003 into a clean pushed publication checkpoint on
+`main` without adding new science functionality; preserve existing work and
+avoid staging generated/cached artifacts.
+
+#### Actions completed
+
+- Read `docs/goals/004-consolidate-three-goal-pilot/Goal.md`,
+  `Plan.md`, `Runbook.md`, and `Log.md`.
+- Confirmed baseline state in `/Users/bwbrook/papers/spatext`:
+  - `git status --short --branch` showed `main...origin/main`.
+  - Dirty state included only expected Goal 001-003 documentation, specs,
+    scripts, modules, tests and existing modified docs, plus incidental
+    host `.DS_Store`.
+- Added `.DS_Store` to `.gitignore` and removed local `.DS_Store`.
+- Re-ran the goal’s validation lane (`uv sync`, truth/observation build + inspect,
+  sensitivity run, JSON smoke checks, format, lint, type-check, test, and build):
+  - `42` tests passed, `92.47%` coverage.
+  - All artifact verification checks passed (`passed: true` plus finite metrics).
+  - Distribution build succeeded (`dist/spatext-0.1.0.tar.gz`, wheel).
+- Staged exactly the accepted path set and confirmed by:
+  - `git diff --cached --name-only`
+  - `git diff --cached --stat`.
+- Ran `uv run pre-commit run --all-files` on staged files; all hooks passed.
+
+#### Commit and publication
+
+- Committed on `main`:
+  - message: `feat: add synth-small observation readiness workflow`
+  - scope: all accepted Goal 001-003 consolidation artifacts plus `.gitignore`.
+- Pushed with `git push origin main`.
+
+#### Outcome
+
+The three-goal synthetic pilot is now in a pushed publication checkpoint state,
+with no generated artifacts, caches, or host noise staged. The next science-step
+recommendation remains: build a response-only extirpation reconstruction check
+against hidden truth before introducing ABC/POM inference.

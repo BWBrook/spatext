@@ -66,6 +66,12 @@ Key locations:
   inspection specification
 - [`spec/synth_small_predator_truth.md`](spec/synth_small_predator_truth.md):
   deterministic predator-response truth specification
+- [`spec/synth_small_predator_truth_inspection.md`](spec/synth_small_predator_truth_inspection.md):
+  deterministic predator-response truth inspection specification
+- [`spec/synth_small_predator_truth_sensitivity.md`](spec/synth_small_predator_truth_sensitivity.md):
+  deterministic predator-response sensitivity and readiness specification
+- [`spec/synth_small_observations.md`](spec/synth_small_observations.md):
+  first response-only observation-layer specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -202,6 +208,123 @@ That command writes JSON, CSV, NPZ, and SVG artifacts for the full latent
 driver-response truth object, including surfaces and full deterministic
 trajectories.
 
+## Implemented predator-truth inspection module
+
+Module 1 now also includes a disk-first inspection layer for auditing an
+existing deterministic predator-truth artifact bundle. It:
+
+- reloads the predator-truth bundle from disk,
+- verifies structural, numerical, trajectory, extirpation, and diagnostic
+  contracts,
+- separates hard verification failures from scientific warnings,
+- writes parameter, surface, trajectory, and extirpation-summary tables,
+- renders a Markdown review report that links back to the emitted SVG figures.
+
+The main predator-truth inspection entrypoints are:
+
+- [`src/spatext/synth/small/predator_inspect.py`](src/spatext/synth/small/predator_inspect.py):
+  artifact loading, verification, warning generation, summary-table generation,
+  and Markdown report rendering
+- [`scripts/inspect_synth_small_predator_truth.py`](scripts/inspect_synth_small_predator_truth.py):
+  command-line utility for inspecting an existing predator-truth bundle
+
+To inspect an existing predator-truth artifact bundle locally:
+
+```bash
+uv run python scripts/inspect_synth_small_predator_truth.py
+```
+
+That command writes an `inspection/` subdirectory containing:
+
+- `verification.json`
+- `parameters.csv`
+- `surface_summary.csv`
+- `trajectory_summary.csv`
+- `extirpation_summary.csv`
+- `report.md`
+
+## Implemented predator-truth sensitivity module
+
+Module 1 now also includes a small deterministic sensitivity/readiness sweep
+around the current predator-truth defaults. It:
+
+- runs the current default plus a local grid over `predation_scale`,
+  `half_saturation`, and `ramp_duration`,
+- computes extirpation, lag, vulnerability, west/east-band, final-abundance,
+  and numerical-stability metrics for each candidate,
+- classifies candidates with explicit readiness criteria,
+- ranks candidates with a documented deterministic score,
+- writes a compact decision package for deciding whether the current default
+  is ready for the first observation layer.
+
+The main sensitivity entrypoints are:
+
+- [`src/spatext/synth/small/sensitivity.py`](src/spatext/synth/small/sensitivity.py):
+  candidate construction, metric extraction, readiness classification, ranking,
+  and report rendering
+- [`scripts/run_synth_small_predator_truth_sensitivity.py`](scripts/run_synth_small_predator_truth_sensitivity.py):
+  command-line utility for emitting the sensitivity decision package
+
+To run the local deterministic sensitivity sweep:
+
+```bash
+uv run python scripts/run_synth_small_predator_truth_sensitivity.py
+```
+
+That command writes `artifacts/synth_small_predator_truth_sensitivity/`
+containing:
+
+- `sweep_results.csv`
+- `candidate_rankings.csv`
+- `readiness.json`
+- `decision_memo.md`
+
+## Implemented first observation module
+
+Module 1 now also includes the first seed-controlled response-only observation
+layer over the approved default predator-truth benchmark. It:
+
+- samples repeated site visits at selected times,
+- emits effort-conditioned prey-response detections/counts,
+- keeps predator arrival, predator pressure, true extirpation, and latent
+  abundance out of analyst-facing tables,
+- writes a clearly labelled evaluation-truth table for diagnostics,
+- inspects observation bundles from disk,
+- runs a lightweight recoverability smoke test without fitting the model.
+
+The main observation entrypoints are:
+
+- [`src/spatext/synth/small/observations.py`](src/spatext/synth/small/observations.py):
+  observation generation, artifact emission, disk-first inspection, and smoke
+  metrics
+- [`scripts/build_synth_small_observations.py`](scripts/build_synth_small_observations.py):
+  command-line utility for emitting the observation bundle
+- [`scripts/inspect_synth_small_observations.py`](scripts/inspect_synth_small_observations.py):
+  command-line utility for inspecting an existing observation bundle
+
+To build and inspect the first observation bundle:
+
+```bash
+uv run python scripts/build_synth_small_observations.py
+uv run python scripts/inspect_synth_small_observations.py
+```
+
+The build command writes `artifacts/synth_small_observations/` containing:
+
+- `observation_config.json`
+- `truth_reference.json`
+- `sites.csv`
+- `visits.csv`
+- `observations.csv`
+- `evaluation_truth.csv`
+
+The inspection command writes `inspection/` outputs:
+
+- `verification.json`
+- `observation_summary.csv`
+- `recoverability_smoke.json`
+- `report.md`
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -223,6 +346,12 @@ inherit legacy exploratory structure just because it existed elsewhere.
   verified.
 - Module 1 `synth-small` deterministic predator-response truth is implemented,
   verified, and executable as a repo-local artifact build.
+- Module 1 `synth-small` deterministic predator-response truth inspection is
+  implemented, verified, and executable as a repo-local artifact review step.
+- Module 1 `synth-small` deterministic predator-response sensitivity/readiness
+  is implemented, verified, and executable as a local decision package.
+- Module 1 `synth-small` first response-only observation layer is implemented,
+  verified, and executable as a local observation/recoverability-smoke package.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.
