@@ -1449,3 +1449,65 @@ The three-goal synthetic pilot is now in a pushed publication checkpoint state,
 with no generated artifacts, caches, or host noise staged. The next science-step
 recommendation remains: build a response-only extirpation reconstruction check
 against hidden truth before introducing ABC/POM inference.
+
+### Interaction 25: Build response-only extirpation reconstruction baseline
+
+#### Request
+
+Build a first response-only `T_X^obs` reconstruction from the synth-small
+response observations, then evaluate it against hidden truth using separate
+diagnostics only.
+
+#### Actions completed
+
+- Reviewed and followed the active goal packet:
+  `docs/goals/005-response-only-extirpation-reconstruction/`.
+- Rebuilt prerequisites and smoke-verified the synthetic truth and observation
+  layer:
+  `scripts/build_synth_small_predator_truth.py`,
+  `scripts/inspect_synth_small_predator_truth.py`,
+  `scripts/build_synth_small_observations.py`,
+  `scripts/inspect_synth_small_observations.py`.
+- Implemented `spec/synth_small_extirpation_reconstruction.md`.
+- Added response-only reconstruction logic in:
+  `src/spatext/synth/small/reconstruction.py`.
+- Added CLI entrypoints:
+  `scripts/reconstruct_synth_small_extirpation.py` and
+  `scripts/inspect_synth_small_extirpation_reconstruction.py`.
+- Exported reconstruction symbols in `src/spatext/synth/small/__init__.py`.
+- Added focused tests in
+  `tests/test_synth_small_extirpation_reconstruction.py`.
+- Ran and passed all requested quality checks:
+  - `uv sync --all-groups`
+  - `uv run python scripts/reconstruct_synth_small_extirpation.py`
+  - `uv run python scripts/inspect_synth_small_extirpation_reconstruction.py`
+  - `uv run pytest tests/test_synth_small_extirpation_reconstruction.py --no-cov`
+  - `uv run ruff format .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest`
+  - `uv run uv build`
+- Artifact outputs written and validated under:
+  `artifacts/synth_small_extirpation_reconstruction/`.
+
+#### Outcomes
+
+- Required files:
+  - `reconstruction_config.json`
+  - `site_reconstruction.csv`
+  - `time_detection_summary.csv`
+  - `verification.json`
+  - `evaluation_metrics.json`
+  - `report.md`
+- Response-only boundary held (no hidden-truth fields in `site_reconstruction.csv`).
+- Reconstruction diagnostics at default settings:
+  - TP / FP / TN / FN confusion: `151 / 0 / 373 / 101`
+  - sensitivity / specificity / precision: `0.5992 / 1.0 / 1.0`
+  - temporal-error count: `151`, MAE: `7.6424`
+  - interpreted status counts: 151 observed-extirpated, 473 not-observed-extirpated,
+    1 insufficient, 0 unsurveyed.
+- `uv build` produced:
+  - `dist/spatext-0.1.0.tar.gz`
+  - `dist/spatext-0.1.0-py3-none-any.whl`
+- Next recommendation logged for the packet:
+  proceed to response-only ABC/POM with cautionary controls.
