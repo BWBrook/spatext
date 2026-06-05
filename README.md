@@ -72,6 +72,10 @@ Key locations:
   deterministic predator-response sensitivity and readiness specification
 - [`spec/synth_small_observations.md`](spec/synth_small_observations.md):
   first response-only observation-layer specification
+- [`spec/synth_small_extirpation_reconstruction.md`](spec/synth_small_extirpation_reconstruction.md):
+  response-only observed-extirpation reconstruction specification
+- [`spec/synth_small_response_screen.md`](spec/synth_small_response_screen.md):
+  tiny response-only screen specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -325,6 +329,76 @@ The inspection command writes `inspection/` outputs:
 - `recoverability_smoke.json`
 - `report.md`
 
+## Implemented extirpation reconstruction module
+
+Module 1 now also includes the first conservative response-only
+observed-extirpation reconstruction layer. It:
+
+- reads the analyst-facing observation tables from disk,
+- estimates a response-side `T_X^obs` proxy using a final sustained-absence
+  rule,
+- keeps hidden truth out of reconstruction decisions and primary outputs,
+- writes separate evaluation diagnostics for synthetic validation only.
+
+The main reconstruction entrypoints are:
+
+- [`src/spatext/synth/small/reconstruction.py`](src/spatext/synth/small/reconstruction.py):
+  reconstruction rules, artifact writing, evaluation-only diagnostics, and
+  bundle inspection
+- [`scripts/reconstruct_synth_small_extirpation.py`](scripts/reconstruct_synth_small_extirpation.py):
+  command-line utility for emitting reconstruction artifacts
+- [`scripts/inspect_synth_small_extirpation_reconstruction.py`](scripts/inspect_synth_small_extirpation_reconstruction.py):
+  command-line utility for inspecting an existing reconstruction bundle
+
+To build and inspect the reconstruction bundle:
+
+```bash
+uv run python scripts/reconstruct_synth_small_extirpation.py
+uv run python scripts/inspect_synth_small_extirpation_reconstruction.py
+```
+
+The reconstruction command writes
+`artifacts/synth_small_extirpation_reconstruction/` containing:
+
+- `reconstruction_config.json`
+- `site_reconstruction.csv`
+- `time_detection_summary.csv`
+- `verification.json`
+- `evaluation_metrics.json`
+- `report.md`
+
+## Implemented response-only screen module
+
+Module 1 now also includes a tiny response-only screen over the reconstructed
+`T_X^obs` surface. It:
+
+- reads only response-side reconstruction artifacts,
+- computes compact site, group, and time summaries,
+- flags weak-information groups and late-screen bias risks,
+- emits a cautionary screen decision without fitting a model.
+
+The main screen entrypoints are:
+
+- [`src/spatext/synth/small/response_screen.py`](src/spatext/synth/small/response_screen.py):
+  response-only screen summaries, verification, and report rendering
+- [`scripts/run_synth_small_response_screen.py`](scripts/run_synth_small_response_screen.py):
+  command-line utility for emitting screen artifacts
+
+To build the screen bundle after the reconstruction bundle exists:
+
+```bash
+uv run python scripts/run_synth_small_response_screen.py
+```
+
+That command writes `artifacts/synth_small_response_screen/` containing:
+
+- `response_screen_config.json`
+- `screen_summary.json`
+- `group_screen_summary.csv`
+- `time_screen_summary.csv`
+- `verification.json`
+- `report.md`
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -352,6 +426,10 @@ inherit legacy exploratory structure just because it existed elsewhere.
   is implemented, verified, and executable as a local decision package.
 - Module 1 `synth-small` first response-only observation layer is implemented,
   verified, and executable as a local observation/recoverability-smoke package.
+- Module 1 `synth-small` response-only extirpation reconstruction is
+  implemented, verified, and executable as a local reconstruction package.
+- Module 1 `synth-small` response-only screen is implemented as a cautious
+  summary layer over the reconstructed response surface.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

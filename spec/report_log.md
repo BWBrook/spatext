@@ -1511,3 +1511,82 @@ diagnostics only.
   - `dist/spatext-0.1.0-py3-none-any.whl`
 - Next recommendation logged for the packet:
   proceed to response-only ABC/POM with cautionary controls.
+
+### Interaction 26: Build tiny response-only inference screen
+
+#### Request
+
+Create and implement Goal 006 on a named branch: a tiny response-only screen
+over the existing `synth-small` `T_X^obs` reconstruction outputs, keeping the
+work cautious, bounded, and free of real-data or formal-inference claims.
+
+#### Actions completed
+
+- Corrected the live worktree interpretation before editing:
+  the thread workspace is the linked Codex worktree
+  `/Users/bwbrook/.codex/worktrees/b4ee/spatext`, not the primary checkout.
+- Fetched `origin`, confirmed `origin/main` at `f9a0ed0` or newer, and created
+  branch `codex/spatext-goal006-response-screen` from `origin/main`.
+- Added Goal 006 packet:
+  `docs/goals/006-response-only-inference-screen/`.
+- Added `spec/synth_small_response_screen.md`.
+- Added response-only screen implementation in:
+  `src/spatext/synth/small/response_screen.py`.
+- Added CLI entrypoint:
+  `scripts/run_synth_small_response_screen.py`.
+- Exported screen symbols in `src/spatext/synth/small/__init__.py`.
+- Added focused tests in `tests/test_synth_small_response_screen.py`.
+- Updated `README.md` with the Goal 005 reconstruction and Goal 006 screen
+  surfaces.
+
+#### Screen design
+
+The screen reads only response-side reconstruction artifacts:
+
+- `reconstruction_config.json`
+- `site_reconstruction.csv`
+- `time_detection_summary.csv`
+- `verification.json`
+
+It does not read the Goal 005 evaluation-only metrics file. The output bundle
+summarizes site counts, observed-extirpated fractions, group-level weak-signal
+notes, time detection summaries, and a cautionary screen decision.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_response_screen.py --no-cov`
+  initially failed because the new screen API did not exist.
+- Focused checks passed:
+  - `uv run pytest tests/test_synth_small_response_screen.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_extirpation_reconstruction.py --no-cov`
+    (`6` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`52` tests, coverage `92.68%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/build_synth_small_observations.py`
+  `uv run python scripts/reconstruct_synth_small_extirpation.py`
+  `uv run python scripts/run_synth_small_response_screen.py`
+
+#### Outcomes
+
+- Screen artifact outputs written under:
+  `artifacts/synth_small_response_screen/`.
+- Default response-screen summary:
+  - site count: `625`
+  - observed-extirpated sites: `151`
+  - not-observed-extirpated sites: `473`
+  - insufficient-history sites: `1`
+  - observed-extirpated fraction: `0.2416`
+  - screen decision: `screen_with_caution`
+  - not-observed-extirpated fraction: `0.7568`
+  - late-screen bias warning: `true`
+- Generated artifacts and distribution outputs were not staged.
+- No real-data, formal inference, remote-compute, commit, or push boundary was
+  crossed.
