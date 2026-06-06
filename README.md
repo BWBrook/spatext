@@ -76,6 +76,8 @@ Key locations:
   response-only observed-extirpation reconstruction specification
 - [`spec/synth_small_response_screen.md`](spec/synth_small_response_screen.md):
   tiny response-only screen specification
+- [`spec/synth_small_response_screen_inspection.md`](spec/synth_small_response_screen_inspection.md):
+  disk-first response-screen inspection specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -381,13 +383,18 @@ The main screen entrypoints are:
 
 - [`src/spatext/synth/small/response_screen.py`](src/spatext/synth/small/response_screen.py):
   response-only screen summaries, verification, and report rendering
+- [`src/spatext/synth/small/response_screen_inspect.py`](src/spatext/synth/small/response_screen_inspect.py):
+  disk-first response-screen artifact inspection and review summaries
 - [`scripts/run_synth_small_response_screen.py`](scripts/run_synth_small_response_screen.py):
   command-line utility for emitting screen artifacts
+- [`scripts/inspect_synth_small_response_screen.py`](scripts/inspect_synth_small_response_screen.py):
+  command-line utility for inspecting an existing screen bundle
 
-To build the screen bundle after the reconstruction bundle exists:
+To build and inspect the screen bundle after the reconstruction bundle exists:
 
 ```bash
 uv run python scripts/run_synth_small_response_screen.py
+uv run python scripts/inspect_synth_small_response_screen.py
 ```
 
 That command writes `artifacts/synth_small_response_screen/` containing:
@@ -397,6 +404,13 @@ That command writes `artifacts/synth_small_response_screen/` containing:
 - `group_screen_summary.csv`
 - `time_screen_summary.csv`
 - `verification.json`
+- `report.md`
+
+The inspection command writes `inspection/` outputs:
+
+- `verification.json`
+- `review_summary.json`
+- `group_review_summary.csv`
 - `report.md`
 
 ## Operating stance
@@ -430,6 +444,8 @@ inherit legacy exploratory structure just because it existed elsewhere.
   implemented, verified, and executable as a local reconstruction package.
 - Module 1 `synth-small` response-only screen is implemented as a cautious
   summary layer over the reconstructed response surface.
+- Module 1 `synth-small` response-only screen inspection is implemented as a
+  disk-first review layer over emitted screen artifacts.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

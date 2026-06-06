@@ -1590,3 +1590,80 @@ notes, time detection summaries, and a cautionary screen decision.
 - Generated artifacts and distribution outputs were not staged.
 - No real-data, formal inference, remote-compute, commit, or push boundary was
   crossed.
+
+### Interaction 27: Build response-screen inspection layer
+
+#### Request
+
+Create and implement Goal 007 on a named branch: a disk-first inspection layer
+for the accepted Goal 006 response-screen artifact bundle.
+
+#### Actions completed
+
+- Confirmed the thread workspace is the linked Codex worktree
+  `/Users/bwbrook/.codex/worktrees/b4ee/spatext`.
+- Fetched `origin`, confirmed `origin/main` at `96e38bc` or newer, and created
+  branch `codex/spatext-goal007-response-screen-inspection` from `origin/main`.
+- Added Goal 007 packet:
+  `docs/goals/007-response-screen-inspection/`.
+- Added `spec/synth_small_response_screen_inspection.md`.
+- Added disk-first inspection implementation in:
+  `src/spatext/synth/small/response_screen_inspect.py`.
+- Added CLI entrypoint:
+  `scripts/inspect_synth_small_response_screen.py`.
+- Exported inspection symbols in `src/spatext/synth/small/__init__.py`.
+- Added focused tests in
+  `tests/test_synth_small_response_screen_inspection.py`.
+- Updated `README.md` with the response-screen inspection surface.
+
+#### Inspection design
+
+The inspector reads only the emitted screen artifact bundle:
+
+- `response_screen_config.json`
+- `screen_summary.json`
+- `group_screen_summary.csv`
+- `time_screen_summary.csv`
+- `verification.json`
+- `report.md`
+
+It does not rebuild the screen from live objects, and it ignores evaluation-like
+decoy files that are outside the screen contract.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_response_screen_inspection.py --no-cov`
+  initially failed because the new inspection API did not exist.
+- Focused checks passed:
+  - `uv run pytest tests/test_synth_small_response_screen_inspection.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_response_screen.py --no-cov`
+    (`4` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`56` tests, coverage `92.81%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/inspect_synth_small_response_screen.py`
+
+#### Outcomes
+
+- Inspection artifact outputs written under:
+  `artifacts/synth_small_response_screen/inspection/`.
+- Default inspection review summary:
+  - screen decision: `screen_with_caution`
+  - site count: `625`
+  - observed-extirpated sites: `151`
+  - not-observed-extirpated sites: `473`
+  - insufficient-history sites: `1`
+  - observed-extirpated fraction: `0.2416`
+  - late-screen bias warning: `true`
+  - not-observed-extirpated fraction: `0.7568`
+  - weak-signal review groups: `front_band/east_band`, `region/east`
+- Generated artifacts and distribution outputs were not staged.
+- No real-data, hidden-truth/evaluation-input, formal inference, remote-compute,
+  commit, or push boundary was crossed.
