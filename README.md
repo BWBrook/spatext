@@ -78,6 +78,8 @@ Key locations:
   tiny response-only screen specification
 - [`spec/synth_small_response_screen_inspection.md`](spec/synth_small_response_screen_inspection.md):
   disk-first response-screen inspection specification
+- [`spec/synth_small_response_screen_evaluation.md`](spec/synth_small_response_screen_evaluation.md):
+  synthetic-only response-screen evaluation-audit specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -385,16 +387,22 @@ The main screen entrypoints are:
   response-only screen summaries, verification, and report rendering
 - [`src/spatext/synth/small/response_screen_inspect.py`](src/spatext/synth/small/response_screen_inspect.py):
   disk-first response-screen artifact inspection and review summaries
+- [`src/spatext/synth/small/response_screen_evaluate.py`](src/spatext/synth/small/response_screen_evaluate.py):
+  synthetic-only evaluation audit for screen failure modes
 - [`scripts/run_synth_small_response_screen.py`](scripts/run_synth_small_response_screen.py):
   command-line utility for emitting screen artifacts
 - [`scripts/inspect_synth_small_response_screen.py`](scripts/inspect_synth_small_response_screen.py):
   command-line utility for inspecting an existing screen bundle
+- [`scripts/evaluate_synth_small_response_screen.py`](scripts/evaluate_synth_small_response_screen.py):
+  command-line utility for synthetic-only screen evaluation
 
-To build and inspect the screen bundle after the reconstruction bundle exists:
+To build, inspect, and evaluate the screen bundle after the reconstruction and
+observation bundles exist:
 
 ```bash
 uv run python scripts/run_synth_small_response_screen.py
 uv run python scripts/inspect_synth_small_response_screen.py
+uv run python scripts/evaluate_synth_small_response_screen.py
 ```
 
 That command writes `artifacts/synth_small_response_screen/` containing:
@@ -411,6 +419,15 @@ The inspection command writes `inspection/` outputs:
 - `verification.json`
 - `review_summary.json`
 - `group_review_summary.csv`
+- `report.md`
+
+The evaluation command writes `evaluation/` outputs:
+
+- `evaluation_config.json`
+- `screen_evaluation_summary.json`
+- `group_evaluation_summary.csv`
+- `site_evaluation_audit.csv`
+- `verification.json`
 - `report.md`
 
 ## Operating stance
@@ -446,6 +463,8 @@ inherit legacy exploratory structure just because it existed elsewhere.
   summary layer over the reconstructed response surface.
 - Module 1 `synth-small` response-only screen inspection is implemented as a
   disk-first review layer over emitted screen artifacts.
+- Module 1 `synth-small` response-screen evaluation is implemented as a
+  synthetic-only diagnostic layer under an explicit evaluation namespace.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

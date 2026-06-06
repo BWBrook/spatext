@@ -1667,3 +1667,85 @@ decoy files that are outside the screen contract.
 - Generated artifacts and distribution outputs were not staged.
 - No real-data, hidden-truth/evaluation-input, formal inference, remote-compute,
   commit, or push boundary was crossed.
+
+### Interaction 28: Build response-screen evaluation audit
+
+#### Request
+
+Create and implement Goal 008 on a named branch: a synthetic-only evaluation
+audit for the Goal 006/007 response-screen output.
+
+#### Actions completed
+
+- Confirmed the thread workspace is the linked Codex worktree
+  `/Users/bwbrook/.codex/worktrees/b4ee/spatext`.
+- Fetched `origin`, confirmed `origin/main` at `db0517a` or newer, and created
+  branch `codex/spatext-goal008-response-screen-evaluation-audit` from
+  `origin/main`.
+- Refreshed Goal 005-007 packets, specs, and source/test surfaces.
+- Added Goal 008 packet:
+  `docs/goals/008-response-screen-evaluation-audit/`.
+- Added `spec/synth_small_response_screen_evaluation.md`.
+- Added synthetic-only evaluation implementation in:
+  `src/spatext/synth/small/response_screen_evaluate.py`.
+- Added CLI entrypoint:
+  `scripts/evaluate_synth_small_response_screen.py`.
+- Exported evaluation symbols in `src/spatext/synth/small/__init__.py`.
+- Added focused tests in
+  `tests/test_synth_small_response_screen_evaluation.py`.
+- Updated `README.md` with the response-screen evaluation surface.
+
+#### Evaluation design
+
+The audit reads emitted response-screen artifacts plus clearly labelled
+synthetic evaluation artifacts:
+
+- `site_reconstruction.csv`
+- `evaluation_metrics.json`
+- `evaluation_truth.csv`
+
+It writes only under:
+
+```text
+artifacts/synth_small_response_screen/evaluation/
+```
+
+and all JSON outputs are explicitly labelled `evaluation_only`.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_response_screen_evaluation.py --no-cov`
+  initially failed because the new evaluation API did not exist.
+- Focused checks passed:
+  - `uv run pytest tests/test_synth_small_response_screen_evaluation.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_response_screen.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_response_screen_inspection.py --no-cov`
+    (`4` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`60` tests, coverage `93.05%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/evaluate_synth_small_response_screen.py`
+
+#### Outcomes
+
+- Evaluation artifact outputs written under:
+  `artifacts/synth_small_response_screen/evaluation/`.
+- Default synthetic-only audit summary:
+  - evaluation-only: `true`
+  - screen decision: `screen_with_caution`
+  - TP / FP / TN / FN: `151 / 0 / 373 / 101`
+  - sensitivity / specificity / precision: `0.5992063492063492 / 1.0 / 1.0`
+  - false-negative groups: `front_band/east_band`,
+    `front_band/middle_band`, `region/central`, `region/east`
+  - weak-signal groups: `front_band/east_band`, `region/east`
+- Generated artifacts and distribution outputs were not staged.
+- No real-data, formal inference, remote-compute, commit, or push boundary was
+  crossed.
