@@ -89,6 +89,9 @@ Key locations:
 - [`spec/synth_small_false_negative_mechanism_audit.md`](spec/synth_small_false_negative_mechanism_audit.md):
   synthetic-only response-reconstruction false-negative mechanism audit
   specification
+- [`spec/synth_small_observation_support_counterfactual_screen.md`](spec/synth_small_observation_support_counterfactual_screen.md):
+  synthetic-only post-extirpation observation-support counterfactual screen
+  specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -633,6 +636,64 @@ higher-priority timing mechanisms and is now auditable through emitted
 `mean_effort`, `min_effort`, `max_effort`, and post-extirpation effort
 summaries.
 
+## Implemented observation-support counterfactual screen
+
+Module 1 now also includes a synthetic-only, evaluation-only counterfactual
+screen over the Goal 012 false negatives. It:
+
+- reads emitted response-screen evaluation, reconstruction, observation,
+  false-negative audit, summary-vector, and compatibility-screen bundles from
+  disk,
+- keeps the production observation design and final-absence reconstruction rule
+  unchanged,
+- defines a small deterministic scenario set including `status_quo`,
+  `truth_guided_absence_floor_all`,
+  `detection_blocker_respecting_floor`, and
+  `late_followup_detection_blocker_respecting`,
+- verifies the existing Goal 009/010 bridge artifacts and reconciles status quo
+  to the Goal 010 `realistic_observed` top ranking, and
+- emits a non-inference recommendation before any reconstruction-rule,
+  observation-design, scoring, ABC, POM, fitting, posterior, broad-sweep, or
+  real-data work.
+
+The main counterfactual-screen entrypoints are:
+
+- [`src/spatext/synth/small/observation_support_counterfactual_screen.py`](src/spatext/synth/small/observation_support_counterfactual_screen.py):
+  artifact loading, scenario resolution, summary-vector construction,
+  compatibility scoring, recommendation, verification, and report rendering
+- [`scripts/run_synth_small_observation_support_counterfactual.py`](scripts/run_synth_small_observation_support_counterfactual.py):
+  command-line utility for emitting the counterfactual-screen bundle
+
+To build the counterfactual-screen bundle after the response-screen evaluation,
+reconstruction, observation, false-negative audit, summary-vector, and
+compatibility-screen bundles exist:
+
+```bash
+uv run python scripts/run_synth_small_observation_support_counterfactual.py
+```
+
+That command writes
+`artifacts/synth_small_response_screen/evaluation/observation_support_counterfactual/`
+containing:
+
+- `counterfactual_config.json`
+- `scenario_definitions.csv`
+- `site_counterfactual_resolution.csv`
+- `scenario_reconstruction_summary.csv`
+- `scenario_summary_vectors.csv`
+- `scenario_compatibility_scores.csv`
+- `scenario_rankings.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+The default counterfactual screen currently verifies the existing Goal 009/010
+bridge artifacts, reconciles status quo to `151` finite targets, top candidate
+`default`, class `incompatible`, and loss `3.52263635737`, and shows that the
+truth-guided all-false-negative support floor restores the finite-target count
+to `252` but remains incompatible. The recommendation is
+`finite_target_support_improves_but_compatibility_not_restored`.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -678,6 +739,9 @@ inherit legacy exploratory structure just because it existed elsewhere.
 - Module 1 `synth-small` false-negative mechanism audit is implemented as a
   synthetic-only diagnostic layer explaining response-screen false negatives
   before reconstruction-rule, observation-design, ABC, or POM work.
+- Module 1 `synth-small` observation-support counterfactual screen is
+  implemented as a synthetic-only, evaluation-only diagnostic layer before any
+  default observation-design, reconstruction-rule, scoring, ABC, or POM change.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

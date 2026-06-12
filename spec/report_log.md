@@ -1591,6 +1591,135 @@ notes, time detection summaries, and a cautionary screen decision.
 - No real-data, formal inference, remote-compute, commit, or push boundary was
   crossed.
 
+### Interaction 33: Screen post-extirpation observation-support counterfactuals
+
+#### Request
+
+Execute Goal 013: build a synthetic-only, evaluation-only counterfactual screen
+that tests whether bounded post-extirpation observation support can restore
+enough observed-extirpation signal to make the existing summary-vector and
+compatibility bridge useful under the current final-absence reconstruction rule.
+
+#### Actions completed
+
+- Fetched `origin`, confirmed `origin/main` at Goal 012 commit `91b5df7`, and
+  created branch
+  `codex/spatext-goal013-observation-support-counterfactual-screen` from
+  `origin/main`, preserving the untracked Goal 013 packet.
+- Refreshed the Goal 013 packet, repo-local `AGENTS.md`, README, and the
+  relevant observation, reconstruction, response-screen evaluation,
+  summary-vector, compatibility-screen, and false-negative audit contracts.
+- Confirmed prerequisite ignored artifacts were already present locally; no
+  prerequisite rebuild was needed before implementation.
+- Added
+  `spec/synth_small_observation_support_counterfactual_screen.md`.
+- Added focused tests in
+  `tests/test_synth_small_observation_support_counterfactual_screen.py`.
+- Added synthetic-only counterfactual-screen implementation in:
+  `src/spatext/synth/small/observation_support_counterfactual_screen.py`.
+- Added CLI entrypoint:
+  `scripts/run_synth_small_observation_support_counterfactual.py`.
+- Exported counterfactual-screen symbols in
+  `src/spatext/synth/small/__init__.py`.
+- Updated `README.md` and `AGENTS.md` with the Goal 013 surface.
+
+#### Counterfactual design
+
+The screen reads emitted artifacts from disk:
+
+- response-screen evaluation artifacts:
+  `artifacts/synth_small_response_screen/evaluation/`
+- extirpation reconstruction artifacts:
+  `artifacts/synth_small_extirpation_reconstruction/`
+- observation artifacts:
+  `artifacts/synth_small_observations/`
+- false-negative audit artifacts:
+  `artifacts/synth_small_response_screen/evaluation/false_negative_audit/`
+- Goal 009 summary-vector bridge artifacts:
+  `artifacts/synth_small_summary_vector/`
+- Goal 010 compatibility-screen bridge artifacts:
+  `artifacts/synth_small_compatibility_screen/`
+
+It writes only under:
+
+```text
+artifacts/synth_small_response_screen/evaluation/observation_support_counterfactual/
+```
+
+and emits:
+
+- `counterfactual_config.json`
+- `scenario_definitions.csv`
+- `site_counterfactual_resolution.csv`
+- `scenario_reconstruction_summary.csv`
+- `scenario_summary_vectors.csv`
+- `scenario_compatibility_scores.csv`
+- `scenario_rankings.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+The scenario set is deterministic: `status_quo`,
+`truth_guided_absence_floor_all`,
+`detection_blocker_respecting_floor`, and
+`late_followup_detection_blocker_respecting`.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_observation_support_counterfactual_screen.py --no-cov`
+  initially failed because the new counterfactual-screen API did not exist.
+- Focused checks passed:
+  - `uv run pytest tests/test_synth_small_observation_support_counterfactual_screen.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_false_negative_mechanism_audit.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_compatibility_screen.py --no-cov`
+    (`6` tests).
+  - `uv run pytest tests/test_synth_small_summary_vector.py --no-cov`
+    (`5` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`83` tests, coverage `92.08%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/run_synth_small_observation_support_counterfactual.py`
+
+#### Outcomes
+
+- Counterfactual artifact outputs written under:
+  `artifacts/synth_small_response_screen/evaluation/observation_support_counterfactual/`.
+- Status quo reconciled Goal 010-012 counts: `151` finite targets and `101`
+  false negatives.
+- Existing bridge-artifact reconciliation passed:
+  - Goal 009/010 finite target counts: `realistic_observed` `151`,
+    `ideal_true` `252`.
+  - Goal 010 `realistic_observed` top ranking: `default`, `incompatible`,
+    loss `3.52263635737`.
+  - Goal 010 `candidate_scores.csv` default weighted-gap sum matched the
+    ranking loss.
+- Scenario outcomes:
+  - `status_quo`: finite targets `151`; default loss `3.52263635737`;
+    incompatible.
+  - `truth_guided_absence_floor_all`: finite targets `252`; resolved false
+    negatives `101`; default loss `1.88500331398`; incompatible.
+  - `detection_blocker_respecting_floor`: finite targets `202`; resolved false
+    negatives `51`; remaining post-extirpation detection blockers `50`;
+    incompatible.
+  - `late_followup_detection_blocker_respecting`: finite targets `198`;
+    resolved false negatives `47`; remaining false negatives `54`;
+    incompatible.
+- Recommendation:
+  `finite_target_support_improves_but_compatibility_not_restored`.
+- Generated artifacts and distribution outputs were ignored and not staged.
+- No default observation-design change, production reconstruction-rule change,
+  response/summary/compatibility scoring change, ABC, POM, likelihood fitting,
+  posterior claim, parameter recovery, broad parameter sweep, real-data
+  analysis, remote compute, commit, or push boundary was crossed.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request
