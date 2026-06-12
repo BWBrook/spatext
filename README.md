@@ -86,6 +86,9 @@ Key locations:
   synthetic-only compatibility-screen specification
 - [`spec/synth_small_compatibility_mismatch_audit.md`](spec/synth_small_compatibility_mismatch_audit.md):
   synthetic-only compatibility-mismatch audit specification
+- [`spec/synth_small_false_negative_mechanism_audit.md`](spec/synth_small_false_negative_mechanism_audit.md):
+  synthetic-only response-reconstruction false-negative mechanism audit
+  specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -574,6 +577,62 @@ candidate is compatible, all `realistic_observed` candidates are incompatible,
 and the finite-target drop of `101` matches the response-screen false-negative
 count of `101`.
 
+## Implemented false-negative mechanism audit
+
+Module 1 now also includes a synthetic-only, disk-first audit explaining the
+response-screen false negatives behind the Goal 011 finite-target bridge. It:
+
+- reads emitted response-screen evaluation, extirpation reconstruction,
+  observation, and mismatch-audit bundles from disk,
+- classifies every false-negative site into one primary diagnostic mechanism,
+- exposes post-extirpation survey timing, detection, and effort features per
+  site,
+- summarizes mechanism counts by region and front-band groups, and
+- emits a non-inference recommendation before any reconstruction-rule,
+  observation-design, scoring, ABC, POM, fitting, posterior, broad-sweep, or
+  real-data work.
+
+The main false-negative audit entrypoints are:
+
+- [`src/spatext/synth/small/false_negative_mechanism_audit.py`](src/spatext/synth/small/false_negative_mechanism_audit.py):
+  artifact loading, site-level timing features, primary mechanism
+  classification, mechanism/group/timing summaries, recommendation,
+  verification, and report rendering
+- [`scripts/audit_synth_small_false_negatives.py`](scripts/audit_synth_small_false_negatives.py):
+  command-line utility for emitting the false-negative audit bundle
+
+To build the false-negative audit bundle after the response-screen evaluation,
+reconstruction, observation, and mismatch-audit bundles exist:
+
+```bash
+uv run python scripts/audit_synth_small_false_negatives.py
+```
+
+That command writes
+`artifacts/synth_small_response_screen/evaluation/false_negative_audit/`
+containing:
+
+- `false_negative_audit_config.json`
+- `false_negative_site_audit.csv`
+- `mechanism_summary.csv`
+- `group_mechanism_summary.csv`
+- `observation_timing_summary.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+The default audit currently classifies all `101` response-screen false
+negatives as post-extirpation observation support problems:
+`no_post_extirpation_surveys` (`39`),
+`late_extirpation_near_survey_horizon` (`30`),
+`post_extirpation_detection_blocks_absence` (`28`), and
+`insufficient_post_extirpation_survey_history` (`4`). The recommendation is
+`diagnose_post_extirpation_observation_gap_before_rule_change`.
+The `sparse_or_low_effort_observation` diagnostic remains available after
+higher-priority timing mechanisms and is now auditable through emitted
+`mean_effort`, `min_effort`, `max_effort`, and post-extirpation effort
+summaries.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -616,6 +675,9 @@ inherit legacy exploratory structure just because it existed elsewhere.
 - Module 1 `synth-small` compatibility mismatch audit is implemented as a
   synthetic-only diagnostic layer explaining the current realistic-observed
   incompatibility before ABC or POM work.
+- Module 1 `synth-small` false-negative mechanism audit is implemented as a
+  synthetic-only diagnostic layer explaining response-screen false negatives
+  before reconstruction-rule, observation-design, ABC, or POM work.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

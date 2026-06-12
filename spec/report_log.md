@@ -1591,6 +1591,127 @@ notes, time detection summaries, and a cautionary screen decision.
 - No real-data, formal inference, remote-compute, commit, or push boundary was
   crossed.
 
+### Interaction 32: Audit response-reconstruction false negatives
+
+#### Request
+
+Execute Goal 012: build a disk-first, synthetic-only audit explaining the 101
+response-screen false negatives identified by Goal 011, before any
+reconstruction-rule change, observation-design change, candidate expansion,
+ABC, POM, fitting, posterior, parameter-recovery, broad sweep, real-data, or
+remote-compute work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `origin/main` at Goal 011 commit `7e4e6f7`, and
+  created branch `codex/spatext-goal012-false-negative-mechanism-audit` from
+  `origin/main`.
+- Refreshed the Goal 012 packet, repo-local `AGENTS.md`, README, problem
+  statement, theory, Goal 005/008/011 contracts, and current reconstruction,
+  response-screen evaluation, and mismatch-audit source/test surfaces.
+- Confirmed prerequisite ignored artifacts were already present under the
+  response-screen evaluation, extirpation reconstruction, observation, and
+  mismatch-audit directories.
+- Added `spec/synth_small_false_negative_mechanism_audit.md`.
+- Added focused tests in
+  `tests/test_synth_small_false_negative_mechanism_audit.py`.
+- Added disk-first false-negative audit implementation in:
+  `src/spatext/synth/small/false_negative_mechanism_audit.py`.
+- Added CLI entrypoint:
+  `scripts/audit_synth_small_false_negatives.py`.
+- Exported false-negative audit symbols in `src/spatext/synth/small/__init__.py`.
+- Updated `README.md` and `AGENTS.md` with the false-negative audit surface.
+
+#### False-negative audit design
+
+The audit reads emitted artifacts from disk:
+
+- Goal 008 response-screen evaluation artifacts:
+  `screen_evaluation_summary.json`, `group_evaluation_summary.csv`,
+  `site_evaluation_audit.csv`, and `verification.json`.
+- Extirpation reconstruction artifacts:
+  `site_reconstruction.csv`, `time_detection_summary.csv`, and
+  `verification.json`.
+- Observation artifacts:
+  `visits.csv`, `observations.csv`, `evaluation_truth.csv`, and
+  `truth_reference.json`.
+- Goal 011 mismatch-audit artifacts:
+  `evaluation_bridge_summary.json`, `recommendation.json`, and
+  `verification.json`.
+
+It emits a non-inference audit bundle under
+`artifacts/synth_small_response_screen/evaluation/false_negative_audit/`:
+
+- `false_negative_audit_config.json`
+- `false_negative_site_audit.csv`
+- `mechanism_summary.csv`
+- `group_mechanism_summary.csv`
+- `observation_timing_summary.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+`false_negative_site_audit.csv` carries one row per false-negative site with
+post-extirpation survey timing, post-extirpation detection counts, final
+absence history, site-level effort diagnostics, group labels, one primary
+mechanism, and optional secondary flags. Summary files reconcile site rows to
+mechanism, group, observation timing, and effort counts.
+
+The review-polished `sparse_or_low_effort_observation` label is defined by
+sparse visit/survey/detection counts or low emitted effort diagnostics
+(`mean_effort <= 0.9` or `min_effort <= 0.65`). The default primary mechanism
+counts remain unchanged after this auditability polish.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_false_negative_mechanism_audit.py --no-cov`
+  initially failed because `build_synth_small_false_negative_mechanism_audit`
+  was not exported.
+- Focused checks passed:
+  - `uv run pytest tests/test_synth_small_false_negative_mechanism_audit.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_compatibility_mismatch_audit.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_response_screen_evaluation.py --no-cov`
+    (`4` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`79` tests, coverage `91.86%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/audit_synth_small_false_negatives.py`
+  (`8` files written).
+- Review-iteration effort polish validation also passed the requested ladder:
+  `git diff --check`; the three focused tests; `ruff format --check`;
+  `ruff check`; `mypy src tests`; full `uv run pytest` (`79` tests, coverage
+  `91.86%`); `uv build`; CLI smoke; and ignored artifact/build-output status.
+
+#### Outcomes
+
+- False-negative sites audited: `101`.
+- Recommendation class:
+  `diagnose_post_extirpation_observation_gap_before_rule_change`.
+- Dominant primary mechanisms:
+  `no_post_extirpation_surveys` (`39`),
+  `late_extirpation_near_survey_horizon` (`30`),
+  `post_extirpation_detection_blocks_absence` (`28`), and
+  `insufficient_post_extirpation_survey_history` (`4`).
+- Strongest region signal: `east` (`41` false negatives).
+- Strongest front-band signal: `middle_band` (`76` false negatives).
+- Goal 011 false-negative bridge reconciles: response-screen false negatives
+  `101`, Goal 011 false-negative count `101`.
+- Generated artifacts and distribution outputs were ignored and not staged.
+- No reconstruction-rule change, observation-design change, screen/scoring
+  change, ABC, POM, likelihood fitting, posterior claim, parameter recovery,
+  broad parameter sweep, real-data analysis, remote compute, commit, or push
+  boundary was crossed.
+
 ### Interaction 29: Build synth-small summary-vector bridge
 
 #### Request
