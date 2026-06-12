@@ -1591,6 +1591,93 @@ notes, time detection summaries, and a cautionary screen decision.
 - No real-data, formal inference, remote-compute, commit, or push boundary was
   crossed.
 
+### Interaction 29: Build synth-small summary-vector bridge
+
+#### Request
+
+Execute Goal 009: build a synthetic-only `S(T_X, T_P)` summary-vector bridge
+before any compatibility-screen, ABC, POM, likelihood, posterior, parameter
+sweep, real-data, or remote-compute work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `origin/main` at `3ce6101`, and created branch
+  `codex/spatext-goal009-summary-vector` from `origin/main`.
+- Refreshed repo contracts, Goal 005-008 packets, active specs, and current
+  reconstruction/screen/evaluation source and tests.
+- Added `spec/synth_small_summary_vector.md`.
+- Added focused tests in `tests/test_synth_small_summary_vector.py`.
+- Added disk-first summary-vector implementation in:
+  `src/spatext/synth/small/summary_vector.py`.
+- Added CLI entrypoint:
+  `scripts/build_synth_small_summary_vector.py`.
+- Exported summary-vector symbols in `src/spatext/synth/small/__init__.py`.
+- Updated `README.md` and `AGENTS.md` with the summary-vector surface.
+
+#### Summary-vector design
+
+The bridge reads emitted synthetic artifacts from disk:
+
+- `artifacts/synth_small_extirpation_reconstruction/site_reconstruction.csv`
+- `artifacts/synth_small_extirpation_reconstruction/verification.json`
+- `artifacts/synth_small_observations/evaluation_truth.csv`
+
+It emits both required modes:
+
+- `ideal_true`: `T_X = true_extirpation`, `T_P = driver_arrival`;
+- `realistic_observed`: `T_X = observed_extirpation_time`,
+  `T_P = driver_arrival`.
+
+Undefined scalar or coverage metrics are retained with explicit
+`missing_reason` values rather than dropped.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_summary_vector.py --no-cov`
+  initially failed because `build_synth_small_summary_vector` did not exist.
+- Focused checks passed:
+  - `uv run pytest tests/test_synth_small_summary_vector.py --no-cov`
+    (`5` tests).
+  - `uv run pytest tests/test_synth_small_extirpation_reconstruction.py --no-cov`
+    (`6` tests).
+  - `uv run pytest tests/test_synth_small_response_screen.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_response_screen_evaluation.py --no-cov`
+    (`4` tests).
+- Quality checks passed after a narrow optional-float typing fix:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`65` tests, coverage `93.12%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/build_synth_small_summary_vector.py`
+
+#### Outcomes
+
+- Summary-vector artifact outputs written under:
+  `artifacts/synth_small_summary_vector/`.
+- Required files:
+  - `summary_vector_config.json`
+  - `summary_components.csv`
+  - `mode_summary.json`
+  - `coverage_curve.csv`
+  - `verification.json`
+  - `report.md`
+- Default summary-vector mode counts:
+  - `ideal_true`: finite targets `252`, finite target fraction `0.4032`,
+    lag count `252`, lag mean `22.5674603175`;
+  - `realistic_observed`: finite targets `151`, finite target fraction
+    `0.2416`, lag count `151`, lag mean `25.0264900662`.
+- Summary-vector verification passed with `synthetic_only: true`.
+- Generated artifacts and distribution outputs were not staged.
+- No ABC, POM, formal inference, parameter sweep, posterior claim, real-data,
+  remote-compute, commit, or push boundary was crossed.
+
 ### Interaction 27: Build response-screen inspection layer
 
 #### Request

@@ -31,6 +31,8 @@ The working proposition is:
   [`spec/synth_small_predator_truth_sensitivity.md`](spec/synth_small_predator_truth_sensitivity.md)
   and
   [`spec/synth_small_observations.md`](spec/synth_small_observations.md)
+  and
+  [`spec/synth_small_summary_vector.md`](spec/synth_small_summary_vector.md)
 - Operational build history: [`spec/report_log.md`](spec/report_log.md)
 
 During the current phase of the repo, `spec/` is the primary design authority.

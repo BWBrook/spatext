@@ -80,6 +80,8 @@ Key locations:
   disk-first response-screen inspection specification
 - [`spec/synth_small_response_screen_evaluation.md`](spec/synth_small_response_screen_evaluation.md):
   synthetic-only response-screen evaluation-audit specification
+- [`spec/synth_small_summary_vector.md`](spec/synth_small_summary_vector.md):
+  synthetic-only summary-vector bridge specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -430,6 +432,45 @@ The evaluation command writes `evaluation/` outputs:
 - `verification.json`
 - `report.md`
 
+## Implemented summary-vector bridge
+
+Module 1 now also includes a synthetic-only `S(T_X, T_P)` summary-vector bridge
+for later compatibility-screen or ABC design work. It:
+
+- reads emitted reconstruction and observation evaluation artifacts from disk,
+- computes matching summaries for `ideal_true` and `realistic_observed` modes,
+- emits explicit missing reasons for undefined metrics,
+- writes deterministic summary components, coverage curves, verification, and
+  a compact report.
+
+The main summary-vector entrypoints are:
+
+- [`src/spatext/synth/small/summary_vector.py`](src/spatext/synth/small/summary_vector.py):
+  disk-first loading, mode construction, summary computation, missing-metric
+  handling, verification, and report rendering
+- [`scripts/build_synth_small_summary_vector.py`](scripts/build_synth_small_summary_vector.py):
+  command-line utility for emitting the summary-vector bundle
+
+To build the summary-vector bundle after the observation and reconstruction
+bundles exist:
+
+```bash
+uv run python scripts/build_synth_small_summary_vector.py
+```
+
+That command writes `artifacts/synth_small_summary_vector/` containing:
+
+- `summary_vector_config.json`
+- `summary_components.csv`
+- `mode_summary.json`
+- `coverage_curve.csv`
+- `verification.json`
+- `report.md`
+
+This is a synthetic method-development layer. It does not perform
+compatibility screening, ABC, likelihood fitting, posterior inference,
+parameter sweeps, or real-data analysis.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -465,6 +506,8 @@ inherit legacy exploratory structure just because it existed elsewhere.
   disk-first review layer over emitted screen artifacts.
 - Module 1 `synth-small` response-screen evaluation is implemented as a
   synthetic-only diagnostic layer under an explicit evaluation namespace.
+- Module 1 `synth-small` summary-vector bridge is implemented as a
+  synthetic-only `S(T_X, T_P)` layer before compatibility-screen or ABC work.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.
