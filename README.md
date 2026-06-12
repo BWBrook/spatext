@@ -84,6 +84,8 @@ Key locations:
   synthetic-only summary-vector bridge specification
 - [`spec/synth_small_compatibility_screen.md`](spec/synth_small_compatibility_screen.md):
   synthetic-only compatibility-screen specification
+- [`spec/synth_small_compatibility_mismatch_audit.md`](spec/synth_small_compatibility_mismatch_audit.md):
+  synthetic-only compatibility-mismatch audit specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -524,6 +526,54 @@ information loss from observation and reconstruction. Compatibility classes are
 screen labels only; they are not likelihoods, posterior probabilities,
 parameter-recovery claims, or real-data interpretation.
 
+## Implemented compatibility mismatch audit
+
+Module 1 now also includes a synthetic-only, disk-first audit explaining the
+current `realistic_observed` compatibility mismatch. It:
+
+- reads the emitted summary-vector, compatibility-screen, and response-screen
+  evaluation bundles from disk,
+- compares `ideal_true` and `realistic_observed` target summaries,
+- ranks score-component contributions for the top realistic candidate,
+- exposes per-breakpoint coverage gaps that reconstruct the coverage RMSE term,
+- bridges the finite-target drop to response-screen false negatives, and
+- emits a non-inference recommendation before any ABC, POM, fitting, posterior
+  claim, parameter recovery, broad sweep, or real-data analysis.
+
+The main mismatch-audit entrypoints are:
+
+- [`src/spatext/synth/small/compatibility_mismatch_audit.py`](src/spatext/synth/small/compatibility_mismatch_audit.py):
+  artifact loading, target-delta summaries, score-contribution summaries,
+  coverage-gap summaries, bridge diagnostics, recommendation, verification,
+  and report rendering
+- [`scripts/audit_synth_small_compatibility_mismatch.py`](scripts/audit_synth_small_compatibility_mismatch.py):
+  command-line utility for emitting the mismatch-audit bundle
+
+To build the mismatch-audit bundle after the prerequisite summary-vector,
+compatibility-screen, and response-screen evaluation bundles exist:
+
+```bash
+uv run python scripts/audit_synth_small_compatibility_mismatch.py
+```
+
+That command writes
+`artifacts/synth_small_compatibility_screen/mismatch_audit/` containing:
+
+- `mismatch_audit_config.json`
+- `target_delta_summary.csv`
+- `score_contribution_summary.csv`
+- `coverage_gap_summary.csv`
+- `evaluation_bridge_summary.json`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+The default audit currently recommends
+`diagnose_observation_reconstruction_before_abc`: the `ideal_true` default
+candidate is compatible, all `realistic_observed` candidates are incompatible,
+and the finite-target drop of `101` matches the response-screen false-negative
+count of `101`.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -563,6 +613,9 @@ inherit legacy exploratory structure just because it existed elsewhere.
   synthetic-only `S(T_X, T_P)` layer before compatibility-screen or ABC work.
 - Module 1 `synth-small` compatibility screen is implemented as a
   synthetic-only deterministic ranking layer before ABC or POM work.
+- Module 1 `synth-small` compatibility mismatch audit is implemented as a
+  synthetic-only diagnostic layer explaining the current realistic-observed
+  incompatibility before ABC or POM work.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

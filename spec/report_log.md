@@ -1792,6 +1792,110 @@ Compatibility classes are deterministic screen labels only.
   parameter sweep, real-data analysis, remote compute, commit, or push boundary
   was crossed.
 
+### Interaction 31: Audit realistic-observed compatibility mismatch
+
+#### Request
+
+Execute Goal 011: build a disk-first, synthetic-only audit explaining the Goal
+010 `realistic_observed` incompatibility before any ABC, POM, fitting,
+posterior, parameter-recovery, broad sweep, real-data, or remote-compute work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `origin/main` at Goal 010 commit `0ee8f59`, and
+  created branch `codex/spatext-goal011-compatibility-mismatch-audit` from
+  `origin/main`.
+- Refreshed the Goal 011 packet, repo-local `AGENTS.md`, README, Goal
+  008/009/010 contracts, and the emitted artifact surfaces.
+- Rebuilt missing prerequisite response-screen artifacts through the runbook
+  chain before running the audit.
+- Added `spec/synth_small_compatibility_mismatch_audit.md`.
+- Added focused tests in
+  `tests/test_synth_small_compatibility_mismatch_audit.py`.
+- Added disk-first mismatch-audit implementation in:
+  `src/spatext/synth/small/compatibility_mismatch_audit.py`.
+- Added CLI entrypoint:
+  `scripts/audit_synth_small_compatibility_mismatch.py`.
+- Exported mismatch-audit symbols in `src/spatext/synth/small/__init__.py`.
+- Updated `README.md` and `AGENTS.md` with the mismatch-audit surface.
+
+#### Mismatch-audit design
+
+The audit reads emitted artifacts from disk:
+
+- Goal 009 summary-vector artifacts:
+  `summary_components.csv`, `coverage_curve.csv`, `mode_summary.json`, and
+  `verification.json`.
+- Goal 010 compatibility-screen artifacts:
+  `compatibility_screen_config.json`, `target_summary.json`,
+  `candidate_scores.csv`, `coverage_score_breakdown.csv`, `mode_rankings.csv`,
+  and `verification.json`.
+- Goal 008 response-screen evaluation artifacts:
+  `screen_evaluation_summary.json`, `group_evaluation_summary.csv`,
+  `site_evaluation_audit.csv`, and `verification.json`.
+
+It emits a non-inference audit bundle under
+`artifacts/synth_small_compatibility_screen/mismatch_audit/`:
+
+- `mismatch_audit_config.json`
+- `target_delta_summary.csv`
+- `score_contribution_summary.csv`
+- `coverage_gap_summary.csv`
+- `evaluation_bridge_summary.json`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+`score_contribution_summary.csv` ranks the top `realistic_observed` candidate's
+weighted-gap components, while `coverage_gap_summary.csv` carries one row per
+coverage breakpoint so the `coverage_curve_rmse` term is reconstructable from
+disk. `evaluation_bridge_summary.json` links finite-target loss to the
+response-screen false-negative count.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_compatibility_mismatch_audit.py --no-cov`
+  initially failed because `build_synth_small_compatibility_mismatch_audit`
+  was not exported.
+- Focused checks passed:
+  - `uv run pytest tests/test_synth_small_compatibility_mismatch_audit.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_compatibility_screen.py --no-cov`
+    (`6` tests).
+  - `uv run pytest tests/test_synth_small_response_screen_evaluation.py --no-cov`
+    (`4` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`75` tests, coverage `92.33%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/audit_synth_small_compatibility_mismatch.py`
+  (`8` files written).
+
+#### Outcomes
+
+- Recommendation class:
+  `diagnose_observation_reconstruction_before_abc`.
+- Top `realistic_observed` candidate:
+  `default`, class `incompatible`, weighted loss `3.52263635737`.
+- Dominant mismatch components:
+  `finite_target_fraction`, `arrival_target_r2`, `coverage_curve_rmse`.
+- Finite-target bridge:
+  `ideal_true` finite targets `252`, `realistic_observed` finite targets
+  `151`, finite-target drop `101`, response-screen false negatives `101`,
+  bridge class `finite_target_drop_matches_false_negatives`.
+- Generated artifacts and distribution outputs were ignored and not staged.
+- No Goal 010 scoring threshold, weight, rank, or class was changed.
+- No ABC, POM, likelihood fitting, posterior claim, parameter recovery, broad
+  parameter sweep, real-data analysis, remote compute, commit, or push boundary
+  was crossed.
+
 ### Interaction 27: Build response-screen inspection layer
 
 #### Request
