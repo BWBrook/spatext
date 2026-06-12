@@ -82,6 +82,8 @@ Key locations:
   synthetic-only response-screen evaluation-audit specification
 - [`spec/synth_small_summary_vector.md`](spec/synth_small_summary_vector.md):
   synthetic-only summary-vector bridge specification
+- [`spec/synth_small_compatibility_screen.md`](spec/synth_small_compatibility_screen.md):
+  synthetic-only compatibility-screen specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -467,9 +469,60 @@ That command writes `artifacts/synth_small_summary_vector/` containing:
 - `verification.json`
 - `report.md`
 
-This is a synthetic method-development layer. It does not perform
-compatibility screening, ABC, likelihood fitting, posterior inference,
-parameter sweeps, or real-data analysis.
+This is a synthetic method-development layer. The bundle itself does not
+perform ABC, likelihood fitting, posterior inference, parameter sweeps, or
+real-data analysis.
+
+## Implemented compatibility screen
+
+Module 1 now also includes a synthetic-only compatibility screen over the
+summary-vector bundle. It:
+
+- reads the Goal 009 summary-vector target bundle from disk,
+- evaluates both `ideal_true` and `realistic_observed` target modes,
+- treats `realistic_observed` as the primary review mode,
+- builds matching summaries for a tiny deterministic candidate set,
+- applies documented gates and weighted-gap losses,
+- exposes per-breakpoint coverage gaps behind the coverage RMSE term, and
+- emits deterministic rankings, compatibility classes, invalid reasons,
+  verification, and a compact report.
+
+The main compatibility-screen entrypoints are:
+
+- [`src/spatext/synth/small/compatibility_screen.py`](src/spatext/synth/small/compatibility_screen.py):
+  target-bundle loading, candidate summary generation, gate/loss scoring,
+  ranking, verification, and report rendering
+- [`scripts/run_synth_small_compatibility_screen.py`](scripts/run_synth_small_compatibility_screen.py):
+  command-line utility for emitting the compatibility-screen bundle
+
+To build the compatibility-screen bundle after the summary-vector bundle
+exists:
+
+```bash
+uv run python scripts/run_synth_small_compatibility_screen.py
+```
+
+That command writes `artifacts/synth_small_compatibility_screen/` containing:
+
+- `compatibility_screen_config.json`
+- `target_summary.json`
+- `candidate_summaries.csv`
+- `candidate_scores.csv`
+- `coverage_score_breakdown.csv`
+- `mode_rankings.csv`
+- `verification.json`
+- `report.md`
+
+`coverage_score_breakdown.csv` contains one row per target mode, candidate, and
+coverage breakpoint, with target time, candidate time, absolute gap, and
+squared gap. It provides the audit trail for reconstructing the
+`coverage_curve_rmse` contribution in `candidate_scores.csv`.
+
+The default candidate is expected to rank exact or near-exact under
+`ideal_true`. `realistic_observed` is the primary review target and may show
+information loss from observation and reconstruction. Compatibility classes are
+screen labels only; they are not likelihoods, posterior probabilities,
+parameter-recovery claims, or real-data interpretation.
 
 ## Operating stance
 
@@ -508,6 +561,8 @@ inherit legacy exploratory structure just because it existed elsewhere.
   synthetic-only diagnostic layer under an explicit evaluation namespace.
 - Module 1 `synth-small` summary-vector bridge is implemented as a
   synthetic-only `S(T_X, T_P)` layer before compatibility-screen or ABC work.
+- Module 1 `synth-small` compatibility screen is implemented as a
+  synthetic-only deterministic ranking layer before ABC or POM work.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

@@ -33,6 +33,8 @@ The working proposition is:
   [`spec/synth_small_observations.md`](spec/synth_small_observations.md)
   and
   [`spec/synth_small_summary_vector.md`](spec/synth_small_summary_vector.md)
+  and
+  [`spec/synth_small_compatibility_screen.md`](spec/synth_small_compatibility_screen.md)
 - Operational build history: [`spec/report_log.md`](spec/report_log.md)
 
 During the current phase of the repo, `spec/` is the primary design authority.

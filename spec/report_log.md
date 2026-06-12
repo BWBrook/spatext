@@ -1678,6 +1678,120 @@ Undefined scalar or coverage metrics are retained with explicit
 - No ABC, POM, formal inference, parameter sweep, posterior claim, real-data,
   remote-compute, commit, or push boundary was crossed.
 
+### Interaction 30: Build synth-small compatibility screen
+
+#### Request
+
+Execute Goal 010: build a synthetic-only compatibility screen over the Goal 009
+summary-vector bridge, using a tiny deterministic candidate set before any
+ABC, POM, fitting, posterior, parameter-sweep, real-data, or remote-compute
+work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `origin/main` at Goal 009 commit `0fd5ee5`, and
+  created branch `codex/spatext-goal010-compatibility-screen` from
+  `origin/main`.
+- Refreshed the Goal 010 packet, Goal 009 summary-vector bridge, README,
+  repo-local `AGENTS.md`, and the existing predator-truth sensitivity helper
+  surface.
+- Added `spec/synth_small_compatibility_screen.md`.
+- Added focused tests in `tests/test_synth_small_compatibility_screen.py`.
+- Added synthetic-only compatibility-screen implementation in:
+  `src/spatext/synth/small/compatibility_screen.py`.
+- Added CLI entrypoint:
+  `scripts/run_synth_small_compatibility_screen.py`.
+- Exported compatibility-screen symbols in
+  `src/spatext/synth/small/__init__.py`.
+- Updated `README.md` and `AGENTS.md` with the compatibility-screen surface.
+
+#### Compatibility-screen design
+
+The screen reads the emitted Goal 009 target bundle:
+
+- `summary_vector_config.json`
+- `summary_components.csv`
+- `mode_summary.json`
+- `coverage_curve.csv`
+- `verification.json`
+
+It evaluates both target modes:
+
+- `ideal_true`
+- `realistic_observed`
+
+`realistic_observed` is the primary review mode. The compact candidate set is:
+
+- `weaker_predation`: `predation_scale = 0.75`, `half_saturation = 6.0`,
+  `ramp_duration = 8`
+- `default`: `predation_scale = 1.0`, `half_saturation = 6.0`,
+  `ramp_duration = 8`
+- `stronger_predation`: `predation_scale = 1.25`, `half_saturation = 6.0`,
+  `ramp_duration = 8`
+
+Candidate summaries reuse the Goal 009 scalar and coverage-curve semantics.
+Rows are scored by documented gates plus weighted gaps over finite target
+fraction, lag mean, lag standard deviation, arrival-target squared
+correlation, front-plane gradient magnitude, and coverage-curve RMSE. The
+coverage-curve contribution is audited by breakpoint in
+`coverage_score_breakdown.csv`, which emits target times, candidate times,
+absolute gaps, and squared gaps so the collapsed RMSE row can be reconstructed.
+Compatibility classes are deterministic screen labels only.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_compatibility_screen.py --no-cov`
+  initially failed because the compatibility-screen API did not exist.
+- RED check for review polish:
+  `uv run pytest tests/test_synth_small_compatibility_screen.py --no-cov`
+  later failed because `coverage_score_breakdown.csv` was not emitted.
+- Focused checks passed:
+  - `uv run pytest tests/test_synth_small_compatibility_screen.py --no-cov`
+    (`6` tests).
+  - `uv run pytest tests/test_synth_small_summary_vector.py --no-cov`
+    (`5` tests).
+  - `uv run pytest tests/test_synth_small_predator_truth_sensitivity.py --no-cov`
+    (`6` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`71` tests, coverage `93.25%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/run_synth_small_compatibility_screen.py`
+  (`8` files written).
+
+#### Outcomes
+
+- Compatibility-screen artifact outputs written under:
+  `artifacts/synth_small_compatibility_screen/`.
+- Required files:
+  - `compatibility_screen_config.json`
+  - `target_summary.json`
+  - `candidate_summaries.csv`
+  - `candidate_scores.csv`
+  - `coverage_score_breakdown.csv`
+  - `mode_rankings.csv`
+  - `verification.json`
+  - `report.md`
+- Candidate count: `3`.
+- Default mode rankings:
+  - `ideal_true`: rank `1`, top candidate `default`, class `compatible`,
+    weighted loss `0`;
+  - `realistic_observed`: rank `1`, top candidate `default`, class
+    `incompatible`, weighted loss `3.52263635737`.
+- Compatibility class counts: `compatible = 1`, `borderline = 0`,
+  `incompatible = 5`, `invalid = 0`.
+- Generated artifacts and distribution outputs were ignored and not staged.
+- No ABC, POM, likelihood fitting, posterior claim, parameter recovery, broad
+  parameter sweep, real-data analysis, remote compute, commit, or push boundary
+  was crossed.
+
 ### Interaction 27: Build response-screen inspection layer
 
 #### Request
