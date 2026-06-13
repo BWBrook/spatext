@@ -1869,6 +1869,166 @@ from `goal013_support_floor` are `coverage_curve_rmse`, `lag_mean`,
 `front_plane_gradient_magnitude`, and `arrival_target_r2`. Scientific outcomes
 and the `timing_bias_drives_residual` recommendation were unchanged.
 
+### Interaction 35: Audit target-time error anatomy
+
+#### Request
+
+Execute Goal 015: build a synthetic-only, evaluation-only target-time error
+anatomy audit that localizes the site-level timing errors exposed by Goal 014,
+separates response-observable proxy signals from hidden-truth-only diagnostics,
+and recommends the next intervention class without starting a reconstruction
+rule screen or inference work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `main...origin/main` at Goal 014 commit
+  `b58901a`, and created branch
+  `codex/spatext-goal015-target-time-error-anatomy-audit` from `origin/main`,
+  preserving the untracked Goal 015 packet.
+- Read the Goal 015 packet, repo-local `AGENTS.md`, README, core scientific
+  specs, and the Goal 012-014 specs/packets/source/test surfaces.
+- Verified prerequisite ignored artifacts were already present locally; no
+  rebuild was needed before implementation.
+- Added `spec/synth_small_target_time_error_anatomy_audit.md`.
+- Added focused tests in
+  `tests/test_synth_small_target_time_error_anatomy_audit.py`.
+- Added synthetic-only target-time error anatomy implementation in:
+  `src/spatext/synth/small/target_time_error_anatomy_audit.py`.
+- Added CLI entrypoint:
+  `scripts/audit_synth_small_target_time_errors.py`.
+- Exported target-time error anatomy symbols in
+  `src/spatext/synth/small/__init__.py`.
+- Updated `README.md` and `AGENTS.md` with the Goal 015 surface.
+
+#### Error-anatomy design
+
+The diagnostic reads emitted artifacts from disk:
+
+- observation artifacts:
+  `artifacts/synth_small_observations/`
+- extirpation reconstruction artifacts:
+  `artifacts/synth_small_extirpation_reconstruction/`
+- response-screen evaluation artifacts:
+  `artifacts/synth_small_response_screen/evaluation/`
+- false-negative audit artifacts:
+  `artifacts/synth_small_response_screen/evaluation/false_negative_audit/`
+- Goal 013 counterfactual artifacts:
+  `artifacts/synth_small_response_screen/evaluation/observation_support_counterfactual/`
+- Goal 014 residual-decomposition artifacts:
+  `artifacts/synth_small_response_screen/evaluation/target_timing_residual_decomposition/`
+
+It writes only under:
+
+```text
+artifacts/synth_small_response_screen/evaluation/target_time_error_anatomy/
+```
+
+and emits:
+
+- `target_time_error_anatomy_config.json`
+- `site_target_time_error_audit.csv`
+- `target_time_error_group_summary.csv`
+- `error_mechanism_summary.csv`
+- `observable_proxy_summary.csv`
+- `transform_error_contrast.csv`
+- `bias_classification_summary.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_target_time_error_anatomy_audit.py --no-cov`
+  initially failed because the new target-time error anatomy API did not
+  exist.
+- Focused Goal 015 tests passed:
+  `uv run pytest tests/test_synth_small_target_time_error_anatomy_audit.py --no-cov`
+  (`3` tests).
+- Focused guardrail tests passed:
+  - `uv run pytest tests/test_synth_small_target_timing_residual_decomposition.py --no-cov`
+    (`3` tests).
+  - `uv run pytest tests/test_synth_small_false_negative_mechanism_audit.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_observation_support_counterfactual_screen.py --no-cov`
+    (`4` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`89` tests, coverage `92.74%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/audit_synth_small_target_time_errors.py`
+  (`10` files written).
+- Generated artifacts and distribution outputs remained ignored:
+  `git status --ignored --short artifacts dist` showed `!! artifacts/` and
+  `!! dist/`.
+
+#### Review polish
+
+A narrow review iteration tightened the observable-proxy auditability contract:
+
+- `observable_proxy_summary.csv` now reports, for each proxy,
+  `true_extirpated_affected_site_count`,
+  `support_floor_large_abs_error_site_count`,
+  `support_floor_large_abs_error_fraction`, and `rule_screen_role`.
+- The proxy roles now distinguish finite-target-support context from
+  residual-timing rule-screen candidates, truth-only references, and mixed
+  evaluation context.
+- The fixed `weak_east_or_edge_signal` site-level flag was removed. The
+  response-observable spatial proxy is now data-derived from the strongest
+  generated spatial/front-band evidence, currently
+  `spatial_front_band_west_band_signal`.
+- The recommendation now requires at least one response-observable
+  `residual_timing_candidate` with nonzero support-floor large-error coverage.
+
+The deterministic residual-timing proxy coverage after the polish is:
+
+- `long_detection_to_target_gap`: `79` true-extirpated affected sites, `49`
+  large support-floor timing errors, fraction `49/79`.
+- `spatial_front_band_west_band_signal`: `112` true-extirpated affected sites,
+  `49` large support-floor timing errors, fraction `49/112`.
+- `status_quo_nonfinite` and `short_final_absence_run` remain
+  finite-target-support context rows with zero large-error coverage.
+
+The review-polish validation rerun passed `git diff --check`, the Goal 015
+focused tests (`3`), Goal 014 (`3`), Goal 012 (`4`), and Goal 013 (`4`)
+guardrail tests, `ruff format --check`, `ruff check`, `mypy src tests`, full
+`uv run pytest` (`89` tests, coverage `92.74%`), `uv build`, and the target-time
+error anatomy CLI smoke (`10` files written). Generated artifacts and build
+outputs remained ignored and unstaged.
+
+#### Outcomes
+
+- The site audit reconciles `625` synth-small sites, `252` true extirpations,
+  `151` status-quo finite targets, `101` false negatives, and `252`
+  support-floor finite targets.
+- Goal 014 `all_extirpated_true_time` remains the transform that restores the
+  Goal 010 ideal-truth bridge (`default`, `compatible`, loss `0`).
+- Goal 013 support floor resolves finite-target gaps but leaves late-biased
+  timing error concentrated in already finite status-quo targets.
+- Strongest deterministic signals are late bias, spatial structure in the
+  western/front-band groups, and response-observable reconstruction-history
+  proxies such as status-quo finite/nonfinite state, final-absence support, and
+  detection-to-target gaps.
+- Recommendation: `response_observable_rule_screen_ready`.
+- CLI outcome:
+  - sites audited: `625`;
+  - true extirpated sites: `252`;
+  - dominant remaining error group: `not_false_negative`;
+  - strongest spatial signal: `west_band`;
+  - observable proxy inventory: `5` response-observable, `3` mixed, and `2`
+    truth-only signals.
+- No default observation-design change, production reconstruction-rule change,
+  response/summary/compatibility/mismatch/false-negative/Goal 013/Goal 014
+  scoring change, candidate change, ABC, POM, likelihood fitting, posterior
+  claim, parameter recovery, broad parameter sweep, real-data analysis, remote
+  compute, commit, or push boundary was crossed.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request

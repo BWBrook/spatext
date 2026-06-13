@@ -94,6 +94,8 @@ Key locations:
   specification
 - [`spec/synth_small_target_timing_residual_decomposition.md`](spec/synth_small_target_timing_residual_decomposition.md):
   synthetic-only target-timing residual-decomposition diagnostic specification
+- [`spec/synth_small_target_time_error_anatomy_audit.md`](spec/synth_small_target_time_error_anatomy_audit.md):
+  synthetic-only target-time error anatomy audit specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -759,6 +761,67 @@ the default candidate (`compatible`, loss `0`). The Goal 013
 `coverage_curve_rmse`, `lag_mean`, `front_plane_gradient_magnitude`, and
 `arrival_target_r2`. The recommendation is `timing_bias_drives_residual`.
 
+## Implemented target-time error anatomy audit
+
+Module 1 now also includes a synthetic-only, evaluation-only target-time error
+anatomy audit over the Goal 014 timing-bias result. It:
+
+- reads emitted observation, reconstruction, response-screen evaluation,
+  false-negative audit, observation-support counterfactual, and target-timing
+  residual-decomposition bundles from disk,
+- compares status-quo and Goal 013 support-floor target times against
+  synthetic true extirpation times at site level,
+- summarizes timing error by false-negative mechanism, region, front band,
+  survey-gap class, near-horizon class, post-extirpation detection class,
+  status-quo finite status, and support-floor resolution status,
+- emits an observable-proxy inventory that separates response-observable,
+  truth-only, and mixed diagnostic signals, reports each proxy's support-floor
+  large-error coverage, and separates finite-target-support context from
+  residual-timing rule-screen candidates, and
+- recommends the next intervention class before any reconstruction-rule,
+  observation-design, scoring, candidate, ABC, POM, or real-data work.
+
+The main target-time error anatomy entrypoints are:
+
+- [`src/spatext/synth/small/target_time_error_anatomy_audit.py`](src/spatext/synth/small/target_time_error_anatomy_audit.py):
+  artifact loading, site-level timing-error anatomy, grouped summaries,
+  observable-proxy inventory, transform contrast, recommendation,
+  verification, and report rendering
+- [`scripts/audit_synth_small_target_time_errors.py`](scripts/audit_synth_small_target_time_errors.py):
+  command-line utility for emitting the target-time error anatomy bundle
+
+To build the target-time error anatomy bundle after the Goal 012-014
+prerequisite bundles exist:
+
+```bash
+uv run python scripts/audit_synth_small_target_time_errors.py
+```
+
+That command writes
+`artifacts/synth_small_response_screen/evaluation/target_time_error_anatomy/`
+containing:
+
+- `target_time_error_anatomy_config.json`
+- `site_target_time_error_audit.csv`
+- `target_time_error_group_summary.csv`
+- `error_mechanism_summary.csv`
+- `observable_proxy_summary.csv`
+- `transform_error_contrast.csv`
+- `bias_classification_summary.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+The default diagnostic currently reconciles `625` sites, `252` true
+extirpations, `151` status-quo finite targets, `101` false negatives, and
+`252` support-floor finite targets. It shows that the support floor resolves
+finite-target gaps but leaves late-biased, spatially structured timing error
+concentrated in already finite status-quo targets. The recommendation is
+`response_observable_rule_screen_ready`, justified by response-observable
+residual-timing candidates with nonzero large-error coverage, including long
+detection-to-target gaps and the data-derived `west_band` spatial/front-band
+signal. No rule change is made here.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -811,6 +874,10 @@ inherit legacy exploratory structure just because it existed elsewhere.
   as a synthetic-only, evaluation-only diagnostic layer explaining the Goal 013
   residual before any reconstruction-rule, observation-design, scoring,
   candidate, ABC, or POM change.
+- Module 1 `synth-small` target-time error anatomy audit is implemented as a
+  synthetic-only, evaluation-only diagnostic layer localizing Goal 014 timing
+  error and separating response-observable, truth-only, and mixed proxy
+  signals before any reconstruction-rule screen or inference work.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

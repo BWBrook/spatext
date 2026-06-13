@@ -43,6 +43,8 @@ The working proposition is:
   [`spec/synth_small_observation_support_counterfactual_screen.md`](spec/synth_small_observation_support_counterfactual_screen.md)
   and
   [`spec/synth_small_target_timing_residual_decomposition.md`](spec/synth_small_target_timing_residual_decomposition.md)
+  and
+  [`spec/synth_small_target_time_error_anatomy_audit.md`](spec/synth_small_target_time_error_anatomy_audit.md)
 - Operational build history: [`spec/report_log.md`](spec/report_log.md)
 
 During the current phase of the repo, `spec/` is the primary design authority.
