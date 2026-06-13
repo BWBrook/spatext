@@ -92,6 +92,8 @@ Key locations:
 - [`spec/synth_small_observation_support_counterfactual_screen.md`](spec/synth_small_observation_support_counterfactual_screen.md):
   synthetic-only post-extirpation observation-support counterfactual screen
   specification
+- [`spec/synth_small_target_timing_residual_decomposition.md`](spec/synth_small_target_timing_residual_decomposition.md):
+  synthetic-only target-timing residual-decomposition diagnostic specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -694,6 +696,69 @@ truth-guided all-false-negative support floor restores the finite-target count
 to `252` but remains incompatible. The recommendation is
 `finite_target_support_improves_but_compatibility_not_restored`.
 
+## Implemented target-timing residual decomposition
+
+Module 1 now also includes a synthetic-only, evaluation-only target-timing
+residual-decomposition diagnostic over the Goal 013 compatibility residual. It:
+
+- reads emitted observation, reconstruction, response-screen evaluation,
+  false-negative audit, observation-support counterfactual, summary-vector, and
+  compatibility-screen bundles from disk,
+- verifies the published Goal 009 summary-vector bridge files and the Goal 010
+  compatibility-screen bridge artifacts,
+- compares a small deterministic target-transform set:
+  `status_quo_observed`, `goal013_support_floor`,
+  `false_negative_true_time`,
+  `false_negative_true_time_detection_respecting`, and
+  `all_extirpated_true_time`,
+- reuses the unchanged Goal 009 summary-vector helpers and Goal 010 candidate
+  scoring contract, and
+- emits per-transform site resolutions, summary vectors, component losses,
+  rankings, and component deltas before any reconstruction-rule,
+  observation-design, scoring, candidate, ABC, POM, or real-data work.
+  The component-delta table includes residual contribution ranks and
+  absolute-delta ranks from both `status_quo_observed` and
+  `goal013_support_floor` within each transform/candidate group.
+
+The main residual-decomposition entrypoints are:
+
+- [`src/spatext/synth/small/target_timing_residual_decomposition.py`](src/spatext/synth/small/target_timing_residual_decomposition.py):
+  artifact loading, target-transform resolution, summary-vector construction,
+  compatibility scoring, component-delta accounting, recommendation,
+  verification, and report rendering
+- [`scripts/analyze_synth_small_target_timing_residuals.py`](scripts/analyze_synth_small_target_timing_residuals.py):
+  command-line utility for emitting the residual-decomposition bundle
+
+To build the residual-decomposition bundle after the Goal 009-013 prerequisite
+bundles exist:
+
+```bash
+uv run python scripts/analyze_synth_small_target_timing_residuals.py
+```
+
+That command writes
+`artifacts/synth_small_response_screen/evaluation/target_timing_residual_decomposition/`
+containing:
+
+- `residual_decomposition_config.json`
+- `target_transform_definitions.csv`
+- `site_target_transform_resolution.csv`
+- `target_transform_summary_vectors.csv`
+- `target_transform_component_losses.csv`
+- `target_transform_rankings.csv`
+- `component_delta_table.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+The default diagnostic currently shows that only
+`all_extirpated_true_time` restores the Goal 010 `ideal_true` expectation for
+the default candidate (`compatible`, loss `0`). The Goal 013
+`goal013_support_floor` remains incompatible with default loss
+`1.88500331398`; its dominant residual components are
+`coverage_curve_rmse`, `lag_mean`, `front_plane_gradient_magnitude`, and
+`arrival_target_r2`. The recommendation is `timing_bias_drives_residual`.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -742,6 +807,10 @@ inherit legacy exploratory structure just because it existed elsewhere.
 - Module 1 `synth-small` observation-support counterfactual screen is
   implemented as a synthetic-only, evaluation-only diagnostic layer before any
   default observation-design, reconstruction-rule, scoring, ABC, or POM change.
+- Module 1 `synth-small` target-timing residual decomposition is implemented
+  as a synthetic-only, evaluation-only diagnostic layer explaining the Goal 013
+  residual before any reconstruction-rule, observation-design, scoring,
+  candidate, ABC, or POM change.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

@@ -1720,6 +1720,155 @@ The scenario set is deterministic: `status_quo`,
   posterior claim, parameter recovery, broad parameter sweep, real-data
   analysis, remote compute, commit, or push boundary was crossed.
 
+### Interaction 34: Decompose target-timing residuals
+
+#### Request
+
+Execute Goal 014: build a synthetic-only, evaluation-only target-timing
+residual-decomposition diagnostic explaining why the Goal 013 finite-target
+restored scenario remains incompatible under the unchanged Goal 009/010 bridge.
+
+#### Actions completed
+
+- Confirmed the action repo checkout at `/Users/bwbrook/papers/spatext`.
+- Confirmed the corrective restart state on `main...origin/main` at Goal 013
+  commit `5b181c9` with only the untracked Goal 014 packet.
+- Created branch
+  `codex/spatext-goal014-target-timing-residual-decomposition` from
+  `origin/main`, preserving the untracked Goal 014 packet.
+- Refreshed the Goal 014 packet, repo-local `AGENTS.md`, README, and the
+  relevant Goal 009 summary-vector, Goal 010 compatibility-screen, Goal 012
+  false-negative audit, and Goal 013 counterfactual contracts.
+- Added `spec/synth_small_target_timing_residual_decomposition.md`.
+- Added focused tests in
+  `tests/test_synth_small_target_timing_residual_decomposition.py`.
+- Added synthetic-only residual-decomposition implementation in:
+  `src/spatext/synth/small/target_timing_residual_decomposition.py`.
+- Added CLI entrypoint:
+  `scripts/analyze_synth_small_target_timing_residuals.py`.
+- Exported residual-decomposition symbols in
+  `src/spatext/synth/small/__init__.py`.
+- Updated `README.md` and `AGENTS.md` with the Goal 014 surface.
+
+#### Contract note
+
+The Goal 014 packet listed
+`artifacts/synth_small_summary_vector/target_summary.json` as a bridge input,
+but the accepted Goal 009 summary-vector artifact contract does not emit that
+file. The implementation verifies the published Goal 009 files:
+`summary_vector_config.json`, `summary_components.csv`, `mode_summary.json`,
+`coverage_curve.csv`, and `verification.json`, plus the Goal 010
+compatibility-screen `target_summary.json`. This interpretation is recorded in
+the emitted `residual_decomposition_config.json` and `verification.json`.
+
+#### Residual-decomposition design
+
+The diagnostic reads emitted artifacts from disk:
+
+- observation artifacts:
+  `artifacts/synth_small_observations/`
+- extirpation reconstruction artifacts:
+  `artifacts/synth_small_extirpation_reconstruction/`
+- response-screen evaluation artifacts:
+  `artifacts/synth_small_response_screen/evaluation/`
+- false-negative audit artifacts:
+  `artifacts/synth_small_response_screen/evaluation/false_negative_audit/`
+- Goal 013 counterfactual artifacts:
+  `artifacts/synth_small_response_screen/evaluation/observation_support_counterfactual/`
+- Goal 009 summary-vector bridge artifacts:
+  `artifacts/synth_small_summary_vector/`
+- Goal 010 compatibility-screen bridge artifacts:
+  `artifacts/synth_small_compatibility_screen/`
+
+It writes only under:
+
+```text
+artifacts/synth_small_response_screen/evaluation/target_timing_residual_decomposition/
+```
+
+and emits:
+
+- `residual_decomposition_config.json`
+- `target_transform_definitions.csv`
+- `site_target_transform_resolution.csv`
+- `target_transform_summary_vectors.csv`
+- `target_transform_component_losses.csv`
+- `target_transform_rankings.csv`
+- `component_delta_table.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+The target-transform set is deterministic: `status_quo_observed`,
+`goal013_support_floor`, `false_negative_true_time`,
+`false_negative_true_time_detection_respecting`, and
+`all_extirpated_true_time`.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_target_timing_residual_decomposition.py --no-cov`
+  initially failed because the new residual-decomposition API did not exist.
+- Focused and guardrail tests passed:
+  - `uv run pytest tests/test_synth_small_target_timing_residual_decomposition.py --no-cov`
+    (`3` tests).
+  - `uv run pytest tests/test_synth_small_observation_support_counterfactual_screen.py --no-cov`
+    (`4` tests).
+  - `uv run pytest tests/test_synth_small_compatibility_screen.py --no-cov`
+    (`6` tests).
+  - `uv run pytest tests/test_synth_small_summary_vector.py --no-cov`
+    (`5` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`86` tests, coverage `92.37%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/analyze_synth_small_target_timing_residuals.py`
+
+#### Outcomes
+
+- Residual-decomposition artifact outputs written under:
+  `artifacts/synth_small_response_screen/evaluation/target_timing_residual_decomposition/`.
+- Default-candidate transform outcomes:
+  - `status_quo_observed`: loss `3.52263635737`, `incompatible`
+  - `goal013_support_floor`: loss `1.88500331398`, `incompatible`
+  - `false_negative_true_time`: loss `1.95601478734`, `incompatible`
+  - `false_negative_true_time_detection_respecting`: loss
+    `2.34353714396`, `incompatible`
+  - `all_extirpated_true_time`: loss `0`, `compatible`
+- `all_extirpated_true_time` restores the Goal 010 `ideal_true`
+  compatibility expectation.
+- The dominant `goal013_support_floor` residual components for the default
+  candidate are `coverage_curve_rmse`, `lag_mean`,
+  `front_plane_gradient_magnitude`, and `arrival_target_r2`.
+- Recommendation: `timing_bias_drives_residual`.
+- Generated artifacts and distribution outputs were ignored and not staged.
+- No default observation-design change, production reconstruction-rule change,
+  response/summary/compatibility/mismatch/false-negative/Goal 013 scoring
+  change, candidate change, ABC, POM, likelihood fitting, posterior claim,
+  parameter recovery, broad parameter sweep, real-data analysis, remote
+  compute, commit, or push boundary was crossed.
+
+#### Review polish
+
+A narrow review iteration improved `component_delta_table.csv` auditability:
+
+- added
+  `absolute_delta_from_status_quo_rank_within_transform_candidate`;
+- added
+  `absolute_delta_from_goal013_support_floor_rank_within_transform_candidate`;
+- kept `residual_rank_within_transform_candidate` unchanged;
+- tightened `component_loss_accounting` verification so it requires both
+  expected score-row cardinality and component-loss summability.
+
+The regenerated `all_extirpated_true_time` / `default` absolute-delta ranks
+from `goal013_support_floor` are `coverage_curve_rmse`, `lag_mean`,
+`front_plane_gradient_magnitude`, and `arrival_target_r2`. Scientific outcomes
+and the `timing_bias_drives_residual` recommendation were unchanged.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request
