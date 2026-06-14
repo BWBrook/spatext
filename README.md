@@ -96,6 +96,8 @@ Key locations:
   synthetic-only target-timing residual-decomposition diagnostic specification
 - [`spec/synth_small_target_time_error_anatomy_audit.md`](spec/synth_small_target_time_error_anatomy_audit.md):
   synthetic-only target-time error anatomy audit specification
+- [`spec/synth_small_response_observable_timing_rule_screen.md`](spec/synth_small_response_observable_timing_rule_screen.md):
+  synthetic-only response-observable timing-rule screen specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -822,6 +824,71 @@ residual-timing candidates with nonzero large-error coverage, including long
 detection-to-target gaps and the data-derived `west_band` spatial/front-band
 signal. No rule change is made here.
 
+## Implemented response-observable timing-rule screen
+
+Module 1 now also includes a synthetic-only, evaluation-only screen of
+deterministic response-observable target-time rules over the Goal 015 timing
+residual. It:
+
+- reads emitted observation, reconstruction, response-screen evaluation,
+  summary-vector, compatibility-screen, Goal 013 counterfactual, Goal 014
+  residual-decomposition, and Goal 015 target-time anatomy bundles from disk,
+- evaluates a compact deterministic set of status-quo, response-observable,
+  truth-guided, and truth-only reference target rules,
+- scores rule target surfaces through the unchanged Goal 009 summary-vector
+  and Goal 010 compatibility-screen contracts,
+- emits per-site rule resolution, per-component compatibility losses,
+  proxy-stratified performance, finite-support accounting, and
+  grid/front-band overfit-risk audit tables,
+  and
+- classifies the next project move before any production reconstruction-rule,
+  observation-design, scoring, candidate, richer-landscape, ABC, POM, or
+  real-data work.
+
+The main timing-rule screen entrypoints are:
+
+- [`src/spatext/synth/small/response_observable_timing_rule_screen.py`](src/spatext/synth/small/response_observable_timing_rule_screen.py):
+  artifact loading, deterministic rule definitions, site-level rule
+  resolution, summary-vector scoring, compatibility ranking, proxy
+  performance, grid-risk audit, recommendation, verification, and report
+  rendering
+- [`scripts/screen_synth_small_response_observable_timing_rules.py`](scripts/screen_synth_small_response_observable_timing_rules.py):
+  command-line utility for emitting the response-observable timing-rule screen
+  bundle
+
+To build the timing-rule screen bundle after the Goal 013-015 prerequisite
+bundles exist:
+
+```bash
+uv run python scripts/screen_synth_small_response_observable_timing_rules.py
+```
+
+That command writes
+`artifacts/synth_small_response_screen/evaluation/response_observable_timing_rule_screen/`
+containing:
+
+- `timing_rule_screen_config.json`
+- `rule_definitions.csv`
+- `site_rule_resolution.csv`
+- `rule_summary_vectors.csv`
+- `rule_component_losses.csv`
+- `rule_rankings.csv`
+- `proxy_rule_performance.csv`
+- `grid_simplicity_risk_audit.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+The default diagnostic currently shows that the best eligible
+response-observable rule is the conservative finite-support candidate
+`nonfinite_supported_final_survey_gap_expansion`: it converts only a small
+audited subset of status-quo nonfinite sites and improves the
+default-candidate loss, but remains incompatible and does not materially
+approach the Goal 013 support-floor reference. The broad
+`nonfinite_last_survey_expansion` rule is retained only as a stress test.
+Spatial/front-band rule gains are audited as simple-grid overfit-prone
+diagnostics, not robust method evidence. No rule adoption is made here.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -878,6 +945,10 @@ inherit legacy exploratory structure just because it existed elsewhere.
   synthetic-only, evaluation-only diagnostic layer localizing Goal 014 timing
   error and separating response-observable, truth-only, and mixed proxy
   signals before any reconstruction-rule screen or inference work.
+- Module 1 `synth-small` response-observable timing-rule screen is implemented
+  as a synthetic-only, evaluation-only diagnostic layer testing deterministic
+  response-observable target-time rules before any production rule,
+  richer-landscape, scoring, candidate, ABC, or POM work.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

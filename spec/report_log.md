@@ -2029,6 +2029,163 @@ outputs remained ignored and unstaged.
   claim, parameter recovery, broad parameter sweep, real-data analysis, remote
   compute, commit, or push boundary was crossed.
 
+### Interaction 36: Screen response-observable timing rules
+
+#### Request
+
+Execute Goal 016: build a synthetic-only, evaluation-only response-observable
+timing-rule screen over the Goal 015 residual timing signal. The screen should
+test deterministic response-observable target-time rules, retain truth-guided
+and truth-only targets only as labelled references, and explicitly audit
+whether spatial/front-band gains are overfit-prone on the constrained
+synth-small grid.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `main...origin/main` at Goal 015 commit
+  `018bc8d`, and created branch
+  `codex/spatext-goal016-response-observable-timing-rule-screen` from
+  `origin/main`, preserving the untracked Goal 016 packet.
+- Read the Goal 016 packet, repo-local `AGENTS.md`, README, core scientific
+  specs, report-log headings, and the Goal 009/010/013/014/015 spec/source/test
+  surfaces.
+- Confirmed prerequisite ignored artifacts were already present locally; no
+  prerequisite rebuild was needed before implementation.
+- Added `spec/synth_small_response_observable_timing_rule_screen.md`.
+- Added focused tests in
+  `tests/test_synth_small_response_observable_timing_rule_screen.py`.
+- Added response-observable timing-rule screen implementation in:
+  `src/spatext/synth/small/response_observable_timing_rule_screen.py`.
+- Added CLI entrypoint:
+  `scripts/screen_synth_small_response_observable_timing_rules.py`.
+- Exported timing-rule screen symbols in
+  `src/spatext/synth/small/__init__.py`.
+- Updated `README.md` and `AGENTS.md` with the Goal 016 surface.
+
+#### Rule-screen design
+
+The diagnostic reads emitted artifacts from disk:
+
+- observation artifacts:
+  `artifacts/synth_small_observations/`
+- extirpation reconstruction artifacts:
+  `artifacts/synth_small_extirpation_reconstruction/`
+- response-screen evaluation artifacts:
+  `artifacts/synth_small_response_screen/evaluation/`
+- Goal 009 summary-vector artifacts:
+  `artifacts/synth_small_summary_vector/`
+- Goal 010 compatibility-screen artifacts:
+  `artifacts/synth_small_compatibility_screen/`
+- Goal 013 counterfactual artifacts:
+  `artifacts/synth_small_response_screen/evaluation/observation_support_counterfactual/`
+- Goal 014 residual-decomposition artifacts:
+  `artifacts/synth_small_response_screen/evaluation/target_timing_residual_decomposition/`
+- Goal 015 target-time anatomy artifacts:
+  `artifacts/synth_small_response_screen/evaluation/target_time_error_anatomy/`
+
+It writes only under:
+
+```text
+artifacts/synth_small_response_screen/evaluation/response_observable_timing_rule_screen/
+```
+
+and emits:
+
+- `timing_rule_screen_config.json`
+- `rule_definitions.csv`
+- `site_rule_resolution.csv`
+- `rule_summary_vectors.csv`
+- `rule_component_losses.csv`
+- `rule_rankings.csv`
+- `proxy_rule_performance.csv`
+- `grid_simplicity_risk_audit.csv`
+- `recommendation.json`
+- `verification.json`
+- `report.md`
+
+The deterministic rule set is:
+
+- `status_quo_observed`;
+- `long_detection_gap_shift_minus4`;
+- `west_band_shift_minus4`;
+- `long_gap_or_west_band_shift_minus4`;
+- `nonfinite_supported_final_survey_gap_expansion`;
+- `nonfinite_last_survey_expansion`;
+- `goal013_support_floor`;
+- `all_extirpated_true_time`.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_small_response_observable_timing_rule_screen.py --no-cov`
+  initially failed because the new timing-rule screen API was not exported.
+- Focused Goal 016 tests passed:
+  `uv run pytest tests/test_synth_small_response_observable_timing_rule_screen.py --no-cov`
+  (`4` tests).
+- Focused guardrail tests passed:
+  - `uv run pytest tests/test_synth_small_target_time_error_anatomy_audit.py --no-cov`
+    (`3` tests).
+  - `uv run pytest tests/test_synth_small_target_timing_residual_decomposition.py --no-cov`
+    (`3` tests).
+  - `uv run pytest tests/test_synth_small_compatibility_screen.py --no-cov`
+    (`6` tests).
+  - `uv run pytest tests/test_synth_small_summary_vector.py --no-cov`
+    (`5` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`93` tests, `93.07%` coverage)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/screen_synth_small_response_observable_timing_rules.py`
+  (`11` files written).
+- Generated artifacts and distribution outputs remained ignored
+  (`!! artifacts/`, `!! dist/`).
+
+#### Outcomes
+
+- Rules evaluated: `8`.
+- Eligibility classes: `5` response-observable rules, `1` status-quo baseline,
+  `1` truth-guided reference, and `1` truth-only reference.
+- Status quo reconciles to `151` finite targets, default loss
+  `3.52263635737`, and class `incompatible`.
+- Goal 013 support floor reconciles to `252` finite targets, default loss
+  `1.88500331398`, and class `incompatible`.
+- Goal 014 all-true reference reconciles to `252` finite targets, default loss
+  `0`, and class `compatible`.
+- Best eligible response-observable rule:
+  `nonfinite_supported_final_survey_gap_expansion`, default loss
+  `3.17643512355`, class `incompatible`.
+- No eligible response-observable rule restores compatibility.
+- Conservative finite-support accounting shows
+  `nonfinite_supported_final_survey_gap_expansion` converts `12` status-quo
+  nonfinite sites to finite targets: `8` are true extirpated and `4` are not
+  true extirpated under synthetic audit. It yields `163` finite targets, large
+  absolute-error count `79`, improves loss versus status quo by `0.34620123382`,
+  but remains `1.29143180957` loss units worse than the Goal 013 support-floor
+  reference and closes only `0.211403424727` of the status-quo-to-Goal 013 loss
+  gap.
+- The broad `nonfinite_last_survey_expansion` remains a stress test: it converts
+  all `474` status-quo nonfinite sites, including `373` sites not true
+  extirpated under synthetic audit, and worsens default loss to
+  `8.58766113725`.
+- Proxy-stratified performance still shows the timing-only
+  `long_detection_gap_shift_minus4` rule reduces `long_detection_to_target_gap`
+  large errors from `49` to `27`, and reduces `sparse_survey_history` large
+  errors from `15` to `6`; west-band spatial rules reduce west-band large
+  errors but are explicitly labelled simple-grid overfit-prone diagnostics.
+- Recommendation: `response_only_signal_insufficient`.
+- No default observation-design change, production reconstruction-rule change,
+  response/summary/compatibility/mismatch/false-negative/Goal 013/Goal 014/Goal
+  015 scoring change, candidate change, richer-landscape work, ABC, POM,
+  likelihood fitting, posterior claim, parameter recovery, broad parameter
+  sweep, real-data analysis, remote compute, commit, or push boundary was
+  crossed.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request
