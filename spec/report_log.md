@@ -2186,6 +2186,126 @@ The deterministic rule set is:
   sweep, real-data analysis, remote compute, commit, or push boundary was
   crossed.
 
+### Interaction 37: Build synth-medium landscape review pack
+
+#### Request
+
+Execute Goal 017: build a deterministic `synth-medium` landscape design review
+pack, with audit tables and SVG visual-review files, before any predator
+spread, prey dynamics, observation model, extirpation reconstruction,
+summary-vector or compatibility-screen change, response-rule adoption,
+inference, or real-data work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `main...origin/main` at Goal 016 commit
+  `fdd865b`, and created branch
+  `codex/spatext-goal017-synth-medium-landscape-review` from `origin/main`,
+  preserving the untracked Goal 017 packet.
+- Read the Goal 017 packet, repo-local `AGENTS.md`, README, problem statement,
+  theory, report-log headings, the relevant synth-small specs, and the current
+  spatial/baseline/predator source and test surfaces.
+- Added `spec/synth_medium_landscape.md`.
+- Added focused tests in `tests/test_synth_medium_landscape.py`.
+- Added the synth-medium package surface:
+  `src/spatext/synth/medium/__init__.py`.
+- Added deterministic landscape generation, audit-table construction,
+  source-distance computation, SVG rendering, verification, and report
+  rendering in `src/spatext/synth/medium/landscape.py`.
+- Added CLI entrypoint: `scripts/build_synth_medium_landscape.py`.
+- Updated `README.md` and `AGENTS.md` with the synth-medium landscape surface.
+
+#### Landscape design
+
+The default review pack is a `72 x 84` rook-adjacent grid with:
+
+- coherent impassable water components;
+- low-quality matrix cells;
+- medium-quality transition zones;
+- aggregated high-quality habitat patches;
+- deterministic corridors;
+- three source zones on the western frontier;
+- passable graph adjacency excluding water cells; and
+- graph-derived source reachability and source-distance metadata.
+
+The generated bundle is written under:
+
+```text
+artifacts/synth_medium_landscape/
+```
+
+It emits the required root files:
+
+- `landscape_config.json`
+- `cells.csv`
+- `adjacency.csv`
+- `patch_summary.csv`
+- `corridor_summary.csv`
+- `water_component_summary.csv`
+- `source_zone_summary.csv`
+- `connectivity_summary.csv`
+- `quality_summary.csv`
+- `verification.json`
+- `report.md`
+
+and the required SVG visual-review files:
+
+- `visuals/habitat_classes.svg`
+- `visuals/quality_surface.svg`
+- `visuals/water_barriers.svg`
+- `visuals/corridors_and_sources.svg`
+- `visuals/source_distance.svg`
+- `visuals/review_montage.svg`
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_medium_landscape.py --no-cov`
+  initially failed because the new `spatext.synth.medium` API did not exist.
+- Focused Goal 017 tests passed:
+  `uv run pytest tests/test_synth_medium_landscape.py --no-cov`
+  (`5` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`98` tests, coverage `93.38%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/build_synth_medium_landscape.py`
+  (`17` files written).
+- Generated artifacts and distribution outputs remained ignored
+  (`!! artifacts/`, `!! dist/`).
+
+#### Outcomes
+
+- Dimensions: `72 x 84`.
+- Cell count: `6048`.
+- Passable cells: `5225`.
+- Water cells: `823` (`0.136078042328` of all cells).
+- Habitat class counts:
+  - `low_quality_matrix`: `3449`
+  - `medium_quality`: `835`
+  - `high_quality_patch`: `682`
+  - `corridor`: `178`
+  - `source_zone`: `81`
+  - `water`: `823`
+- Patch count: `6`.
+- Corridor count: `5`.
+- Source-zone count: `3`, all on the western frontier.
+- Passable component count: `1`.
+- Source-reachable passable cells: `5225` of `5225`; fraction `1.0`.
+- Maximum source distance: `97`.
+- Verification result: passed.
+- No predator spread, prey dynamics, observation model, extirpation
+  reconstruction, summary-vector or compatibility-screen change, response-rule
+  adoption, ABC, POM, likelihood, MCMC, posterior, parameter recovery, fitting,
+  real-data analysis, broad sweep, remote compute, commit, or push boundary was
+  crossed.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request

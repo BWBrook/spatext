@@ -98,6 +98,8 @@ Key locations:
   synthetic-only target-time error anatomy audit specification
 - [`spec/synth_small_response_observable_timing_rule_screen.md`](spec/synth_small_response_observable_timing_rule_screen.md):
   synthetic-only response-observable timing-rule screen specification
+- [`spec/synth_medium_landscape.md`](spec/synth_medium_landscape.md):
+  synthetic-only synth-medium landscape design review-pack specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -888,6 +890,63 @@ approach the Goal 013 support-floor reference. The broad
 `nonfinite_last_survey_expansion` rule is retained only as a stress test.
 Spatial/front-band rule gains are audited as simple-grid overfit-prone
 diagnostics, not robust method evidence. No rule adoption is made here.
+
+## Implemented synth-medium landscape review pack
+
+The repository now includes a synthetic-only, landscape-design-only
+`synth-medium` review pack. It creates a richer deterministic spatial substrate
+for human review before any predator spread or prey-impact simulation is
+attempted. It:
+
+- builds a `72 x 84` grid with coherent impassable water components,
+  low-quality matrix, medium-quality transition zones, aggregated high-quality
+  patches, visible corridors, and three western source zones,
+- emits passable graph adjacency with water excluded from all edge endpoints,
+- computes source reachability and graph-distance metadata over passable land,
+- writes audit tables for cells, adjacency, patches, corridors, water
+  components, source zones, connectivity, and habitat quality, and
+- writes deterministic SVG visual-review files without adding a plotting
+  dependency.
+
+The main synth-medium landscape entrypoints are:
+
+- [`src/spatext/synth/medium/landscape.py`](src/spatext/synth/medium/landscape.py):
+  deterministic landscape generation, graph/source-distance computation,
+  summary-table construction, SVG rendering, verification, and report rendering
+- [`scripts/build_synth_medium_landscape.py`](scripts/build_synth_medium_landscape.py):
+  command-line utility for emitting the landscape review bundle
+
+To build the landscape review pack:
+
+```bash
+uv run python scripts/build_synth_medium_landscape.py
+```
+
+That command writes `artifacts/synth_medium_landscape/` containing:
+
+- `landscape_config.json`
+- `cells.csv`
+- `adjacency.csv`
+- `patch_summary.csv`
+- `corridor_summary.csv`
+- `water_component_summary.csv`
+- `source_zone_summary.csv`
+- `connectivity_summary.csv`
+- `quality_summary.csv`
+- `verification.json`
+- `report.md`
+- `visuals/habitat_classes.svg`
+- `visuals/quality_surface.svg`
+- `visuals/water_barriers.svg`
+- `visuals/corridors_and_sources.svg`
+- `visuals/source_distance.svg`
+- `visuals/review_montage.svg`
+
+The default review pack currently has `6048` cells, `5225` passable cells,
+`823` water cells, `6` high-quality patches, `5` corridors, and `3` western
+source zones. All passable cells are source-reachable in the default design.
+This module does not simulate predator spread, prey dynamics, observations,
+reconstruction, response rules, fitting, inference, or real-data analysis.
 
 ## Operating stance
 
