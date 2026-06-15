@@ -2306,6 +2306,145 @@ and the required SVG visual-review files:
   real-data analysis, broad sweep, remote compute, commit, or push boundary was
   crossed.
 
+### Interaction 38: Build synth-medium spread-impact review pack
+
+#### Request
+
+Execute Goal 018: build a deterministic, synthetic-only predator-spread and
+prey-impact review pack over the accepted Goal 017 `synth-medium` landscape,
+with bounded candidate parameter tuning, audit tables, SVG visual-review files,
+and explicit review gates before any observation, reconstruction, fitting,
+inference, real-data, or Goal 019 work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `main...origin/main` at Goal 017 commit
+  `ce42cced`, and created branch
+  `codex/spatext-goal018-synth-medium-spread-impact-review` from
+  `origin/main`.
+- Read the Goal 018 delegation, repo-local `AGENTS.md`, README, problem
+  statement, theory, `spec/synth_medium_landscape.md`, Goal 017 packet files,
+  `src/spatext/synth/medium/landscape.py`, and relevant synth-small predator
+  truth/inspection patterns.
+- Added Goal 018 packet:
+  `docs/goals/018-synth-medium-spread-impact-review-pack/`.
+- Added `spec/synth_medium_spread_impact_review_pack.md`.
+- Added deterministic predator-spread, prey-impact, audit-table, verification,
+  SVG rendering, and report logic in
+  `src/spatext/synth/medium/spread_impact.py`.
+- Added CLI entrypoint:
+  `scripts/simulate_synth_medium_spread_impact.py`.
+- Exported the spread-impact review-pack surface in
+  `src/spatext/synth/medium/__init__.py`.
+- Added focused tests in `tests/test_synth_medium_spread_impact.py`.
+- Updated `README.md` and `AGENTS.md` with the spread-impact review-pack
+  surface.
+
+#### Simulation design
+
+The default review pack uses the accepted Goal 017 landscape exactly as the
+substrate. Water cells remain impassable and are never colonized. Multiple
+western source zones seed predator pressure at time zero. Weighted graph travel
+over passable adjacency creates habitat-dependent predator arrival times, with
+source zones, corridors, and high-quality patches faster than low-quality
+matrix. Prey baseline abundance is tied to habitat quality, and prey
+impact/quasi-extirpation follows predator arrival with a nonzero deterministic
+lag distribution.
+
+Five named candidate parameter sets were recorded in
+`parameter_candidate_log.csv`. The selected default is
+`balanced_corridor_detour_v2`, chosen as a review-pack default rather than a
+fitted or estimated parameter set.
+
+The generated bundle is written under:
+
+```text
+artifacts/synth_medium_spread_impact/
+```
+
+It emits the required root files:
+
+- `simulation_config.json`
+- `parameter_candidate_log.csv`
+- `cell_truth.csv`
+- `time_series_summary.csv`
+- `source_contribution_summary.csv`
+- `habitat_class_timing_summary.csv`
+- `corridor_barrier_effect_summary.csv`
+- `prey_impact_summary.csv`
+- `recoverability_proxy_summary.csv`
+- `verification.json`
+- `report.md`
+
+and the required SVG visual-review files:
+
+- `visuals/predator_arrival_time.svg`
+- `visuals/predator_occupancy_snapshots.svg`
+- `visuals/prey_abundance_snapshots.svg`
+- `visuals/prey_impact_time.svg`
+- `visuals/source_contribution_map.svg`
+- `visuals/arrival_impact_lag.svg`
+- `visuals/review_montage.svg`
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_medium_spread_impact.py --no-cov`
+  initially failed because the new `spatext.synth.medium` spread-impact API did
+  not exist.
+- Focused Goal 018 tests passed:
+  `uv run pytest tests/test_synth_medium_spread_impact.py --no-cov`
+  (`5` tests).
+- Goal 017 guardrail tests passed:
+  `uv run pytest tests/test_synth_medium_landscape.py --no-cov`
+  (`5` tests).
+- Quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`103` tests, coverage `93.39%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/simulate_synth_medium_spread_impact.py`
+  (`18` files written).
+- Generated artifacts and distribution outputs remained ignored
+  (`!! artifacts/`, `!! dist/`).
+
+#### Outcomes
+
+- Selected parameter set: `balanced_corridor_detour_v2`.
+- Candidate count: `5`.
+- Final colonized passable cells: `4605` of `5225`
+  (`0.881339712919`).
+- Finite prey quasi-extirpations: `4289` of `5225`
+  (`0.820861244019`).
+- Material source-zone contributors: `3`.
+- Source contribution fractions over final colonized passable cells:
+  - `source_west_mid`: `0.605646036916`
+  - `source_west_north`: `0.258631921824`
+  - `source_west_south`: `0.13572204126`
+- Uncolonized-passable accounting row:
+  `620` of `5225` passable cells (`0.118660287081`).
+- Arrival-time range: `119.978073041`.
+- Arrival-to-extirpation lag range: `14.6788424859`.
+- Recoverability proxies passed: `7` of `7`.
+- Recoverability proxy IDs use `arrival_time_range` and `impact_lag_range`;
+  their observed values are full ranges, not interquartile ranges.
+- Corridor versus matrix arrival contrast: `50.9803242702`.
+- Low-quality water-detour contrast:
+  `water_adjacent_low_quality_matrix` detour `14.2546672188` versus
+  `non_water_adjacent_low_quality_matrix` detour `13.1644543659`.
+- Verification result: passed.
+- Recommendation: `ready_for_human_spread_impact_review`.
+- No Goal 017 landscape redesign, observation model, extirpation
+  reconstruction, synth-small scoring/candidate/class change, ABC, POM,
+  likelihood, MCMC, posterior, parameter recovery, fitting, real-data analysis,
+  broad sweep, remote compute, commit, push, generated-artifact staging, or
+  Goal 019 work was started.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request

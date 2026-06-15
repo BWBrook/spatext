@@ -100,6 +100,9 @@ Key locations:
   synthetic-only response-observable timing-rule screen specification
 - [`spec/synth_medium_landscape.md`](spec/synth_medium_landscape.md):
   synthetic-only synth-medium landscape design review-pack specification
+- [`spec/synth_medium_spread_impact_review_pack.md`](spec/synth_medium_spread_impact_review_pack.md):
+  synthetic-only synth-medium predator-spread and prey-impact review-pack
+  specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -947,6 +950,66 @@ The default review pack currently has `6048` cells, `5225` passable cells,
 source zones. All passable cells are source-reachable in the default design.
 This module does not simulate predator spread, prey dynamics, observations,
 reconstruction, response rules, fitting, inference, or real-data analysis.
+
+## Implemented synth-medium spread-impact review pack
+
+The repository now includes a synthetic-only, review-only predator-spread and
+prey-impact truth bundle over the accepted synth-medium landscape. It keeps the
+Goal 017 landscape fixed, seeds multiple western source zones, excludes water
+from the passable spread graph, uses habitat-dependent conductance, assigns
+prey baseline abundance from habitat quality, and applies deterministic
+arrival-to-impact lags before prey quasi-extirpation.
+
+The main spread-impact entrypoints are:
+
+- [`src/spatext/synth/medium/spread_impact.py`](src/spatext/synth/medium/spread_impact.py):
+  bounded candidate definitions, graph-based arrival simulation,
+  prey-impact construction, audit-table generation, SVG rendering,
+  verification, and report rendering
+- [`scripts/simulate_synth_medium_spread_impact.py`](scripts/simulate_synth_medium_spread_impact.py):
+  command-line utility for emitting the spread-impact review bundle
+
+To build the spread-impact review pack:
+
+```bash
+uv run python scripts/simulate_synth_medium_spread_impact.py
+```
+
+That command writes `artifacts/synth_medium_spread_impact/` containing:
+
+- `simulation_config.json`
+- `parameter_candidate_log.csv`
+- `cell_truth.csv`
+- `time_series_summary.csv`
+- `source_contribution_summary.csv`
+- `habitat_class_timing_summary.csv`
+- `corridor_barrier_effect_summary.csv`
+- `prey_impact_summary.csv`
+- `recoverability_proxy_summary.csv`
+- `verification.json`
+- `report.md`
+- `visuals/predator_arrival_time.svg`
+- `visuals/predator_occupancy_snapshots.svg`
+- `visuals/prey_abundance_snapshots.svg`
+- `visuals/prey_impact_time.svg`
+- `visuals/source_contribution_map.svg`
+- `visuals/arrival_impact_lag.svg`
+- `visuals/review_montage.svg`
+
+The selected default parameter set is
+`balanced_corridor_detour_v2`. It yields `4605` final colonized passable cells,
+`4289` finite prey quasi-extirpations, `3` material source-zone contributions,
+and a `ready_for_human_spread_impact_review` recommendation. The
+recoverability proxy table currently passes all `7` proxies, including a
+low-quality-matrix water-detour contrast. Its timing proxy IDs are
+`arrival_time_range` and `impact_lag_range`, because the audited values are
+full ranges. `source_contribution_summary.csv` separates
+`source_contribution` rows, whose fractions use final colonized passable cells
+as the denominator, from the `uncolonized_passable_accounting` row, whose
+fraction uses all passable cells. This review pack does not create
+observations, reconstruct extirpation times, fit parameters, infer posteriors,
+run ABC/POM/likelihood/MCMC workflows, analyse real data, or start the next
+goal.
 
 ## Operating stance
 
