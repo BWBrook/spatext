@@ -105,6 +105,8 @@ Key locations:
   specification
 - [`spec/synth_medium_observation_design_review_pack.md`](spec/synth_medium_observation_design_review_pack.md):
   synthetic-only synth-medium observation-design review-pack specification
+- [`spec/synth_medium_response_reconstruction_benchmark.md`](spec/synth_medium_response_reconstruction_benchmark.md):
+  synthetic-only synth-medium response reconstruction benchmark specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -1069,6 +1071,58 @@ reconstruct extirpation times, build or select a reconstruction rule, fit
 parameters, infer posteriors, run ABC/POM/likelihood/MCMC workflows, analyse
 real data, or start the next goal.
 
+## Implemented synth-medium response reconstruction benchmark
+
+The repository now includes a deterministic, synthetic-only response-time
+reconstruction benchmark over the accepted Goal 019 observations and fixed Goal
+018 truth. It tests whether the accepted observation design has enough
+response-only signal for later back-fitting review by comparing a small set of
+benchmark-only final-absence timing rules across the full-observability
+benchmark, structured default, and sparse stress regimes.
+
+The main response-reconstruction benchmark entrypoints are:
+
+- [`src/spatext/synth/medium/response_reconstruction.py`](src/spatext/synth/medium/response_reconstruction.py):
+  response-only benchmark-rule definitions, reconstructed-time generation,
+  synthetic truth bridge summaries, SVG rendering, verification, and report
+  rendering
+- [`scripts/benchmark_synth_medium_response_reconstruction.py`](scripts/benchmark_synth_medium_response_reconstruction.py):
+  command-line utility for emitting the response-reconstruction benchmark
+  bundle
+
+To build the response-reconstruction benchmark review pack:
+
+```bash
+uv run python scripts/benchmark_synth_medium_response_reconstruction.py
+```
+
+That command writes
+`artifacts/synth_medium_response_reconstruction_benchmark/` containing:
+
+- `response_reconstruction_config.json`
+- `reconstruction_rule_definitions.csv`
+- `reconstructed_cell_times.csv`
+- `truth_reconstruction_bridge.csv`
+- `reconstruction_error_summary.csv`
+- `rule_regime_rankings.csv`
+- `support_gap_summary.csv`
+- `recoverability_signal_summary.csv`
+- `verification.json`
+- `report.md`
+- `visuals/truth_response_time.svg`
+- `visuals/default_primary_reconstructed_time.svg`
+- `visuals/default_primary_residual_error.svg`
+- `visuals/default_primary_support_gap.svg`
+- `visuals/regime_rule_comparison_montage.svg`
+- `visuals/review_montage.svg`
+
+`reconstructed_cell_times.csv` is the analyst-facing response-only table and
+omits hidden truth fields. Truth joins and timing errors are isolated in
+`truth_reconstruction_bridge.csv` and summary tables. The current benchmark is
+a diagnostic review pack, not production reconstruction-rule adoption, fitting,
+ABC/POM/likelihood/MCMC, posterior inference, parameter recovery, real-data
+analysis, or remote compute.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -1129,9 +1183,10 @@ inherit legacy exploratory structure just because it existed elsewhere.
   as a synthetic-only, evaluation-only diagnostic layer testing deterministic
   response-observable target-time rules before any production rule,
   richer-landscape, scoring, candidate, ABC, or POM work.
-- Module 2 `synth-medium` landscape, spread-impact truth, and observation
-  design review packs are implemented as synthetic-only human-review gates
-  before any reconstruction, fitting, inference, or real-data work.
+- Module 2 `synth-medium` landscape, spread-impact truth, observation design,
+  and response-reconstruction benchmark review packs are implemented as
+  synthetic-only human-review gates before any production reconstruction-rule
+  adoption, fitting, inference, or real-data work.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

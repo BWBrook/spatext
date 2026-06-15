@@ -2733,6 +2733,130 @@ Focused red-green evidence:
   inference, real-data, broad-sweep, remote-compute, commit, push,
   generated-artifact staging, or Goal 020 work was performed.
 
+### Interaction 40: Build synth-medium response reconstruction benchmark
+
+#### Request
+
+Execute Goal 020: build a deterministic, synthetic-only response-time
+reconstruction benchmark over the accepted Goal 019 `synth-medium`
+observations and fixed Goal 018 latent truth, then stop for orchestrator
+review before any production reconstruction-rule adoption, fitting, inference,
+real-data, remote-compute, or Goal 021 work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `main...origin/main` at accepted Goal 019 commit
+  `93df97569b4810b8a1b100feaedc332a2534a40d`, and created branch
+  `codex/spatext-goal020-synth-medium-response-reconstruction-benchmark` from
+  `origin/main`.
+- Read repo-local `AGENTS.md`, README, Goal 017/018/019 specs and logs, and
+  the synth-medium landscape, spread-impact, and observation modules.
+- Added Goal 020 packet:
+  `docs/goals/020-synth-medium-response-reconstruction-benchmark/`.
+- Added `spec/synth_medium_response_reconstruction_benchmark.md`.
+- Added deterministic response-only benchmark-rule, reconstructed-time,
+  synthetic truth-bridge, error-summary, ranking, support-gap, verification,
+  SVG rendering, and report logic in
+  `src/spatext/synth/medium/response_reconstruction.py`.
+- Added CLI entrypoint:
+  `scripts/benchmark_synth_medium_response_reconstruction.py`.
+- Exported the response-reconstruction benchmark surface in
+  `src/spatext/synth/medium/__init__.py`.
+- Added focused tests in
+  `tests/test_synth_medium_response_reconstruction_benchmark.py`.
+- Updated `README.md` and `AGENTS.md` with the response-reconstruction
+  benchmark surface.
+
+#### Benchmark design
+
+The benchmark consumes the accepted Goal 019 observation design and evaluates
+three response-observable benchmark rules:
+
+- `final_absence_run_2`
+- `final_absence_run_1`
+- `midpoint_after_last_detection`
+
+The rules use response observations and observation support only. Hidden truth
+is excluded from `reconstructed_cell_times.csv` and enters only in
+`truth_reconstruction_bridge.csv` and synthetic-only audit summaries.
+
+The generated bundle is written under:
+
+```text
+artifacts/synth_medium_response_reconstruction_benchmark/
+```
+
+It emits `10` root audit/report files plus `6` SVG visual-review files.
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_medium_response_reconstruction_benchmark.py --no-cov`
+  initially failed because the new `spatext.synth.medium`
+  response-reconstruction API did not exist.
+- Focused Goal 020 tests passed:
+  `uv run pytest tests/test_synth_medium_response_reconstruction_benchmark.py --no-cov`
+  (`5` tests).
+
+Final validation and CLI outcomes will be recorded after the full Goal 020
+validation ladder is completed.
+
+#### Final validation and outcomes
+
+- Full validation completed:
+  - `git status --short --branch --untracked-files=all`
+  - `git diff --check`
+  - `uv run pytest tests/test_synth_medium_response_reconstruction_benchmark.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_spread_impact.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_landscape.py --no-cov`
+    (`5` tests)
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`113` tests, coverage `93.66%`)
+  - `uv build`
+  - `uv run python scripts/benchmark_synth_medium_response_reconstruction.py`
+    (`16` files written)
+  - `git status --ignored --short artifacts dist`
+    (`!! artifacts/`, `!! dist/`)
+- Source reconciliation passed:
+  - Goal 017 landscape: `6048` total cells, `5225` passable, `823` water.
+  - Goal 018 truth: selected parameter set `balanced_corridor_detour_v2`,
+    `4605` final colonized passable cells, `4289` finite prey extirpations.
+  - Goal 019 observations: selected default
+    `structured_response_observed_default`, `21258` default survey records,
+    and `2313` default false negatives.
+- Full-observability positive control passed. Best benchmark rule
+  `midpoint_after_last_detection` reconstructed all `4289` true positives with
+  `0` false negatives and median absolute error `2.929258094361`.
+- Default regime best rule `final_absence_run_1`: `2553` finite
+  reconstructions, `2249` true positives, `304` false positives, `2040` false
+  negatives, finite recall `0.524364653765`, specificity `0.675213675214`,
+  precision `0.880924402664`, median absolute error `16.186166872186`, p90
+  absolute error `56.5705868251`, and `809` large errors.
+- Sparse stress best rule `final_absence_run_2`: `59` finite
+  reconstructions, `52` true positives, finite recall `0.012124038237`,
+  median absolute error `25.2808847092`, and worse loss than the default.
+- Default support-gap accounting for `final_absence_run_1`: `4411` surveyed
+  cells, `814` never surveyed cells, `1216` no-detection-history cells, `642`
+  no-post-detection-survey cells, and `2553` finite reconstruction-support
+  cells.
+- Verification result: passed.
+- Recommendation:
+  `observation_design_not_recoverable_enough_for_backfitting`.
+- Generated artifacts and distribution outputs remained ignored and unstaged.
+- No Goal 017 landscape change, Goal 018 truth change, Goal 019
+  observation-design change, production reconstruction-rule adoption, fitting,
+  ABC, POM, likelihood, MCMC, posterior, parameter recovery, real-data
+  analysis, broad sweep, remote compute, commit, push, generated-artifact
+  staging, or Goal 021 work was performed.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request
