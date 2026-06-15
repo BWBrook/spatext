@@ -103,6 +103,8 @@ Key locations:
 - [`spec/synth_medium_spread_impact_review_pack.md`](spec/synth_medium_spread_impact_review_pack.md):
   synthetic-only synth-medium predator-spread and prey-impact review-pack
   specification
+- [`spec/synth_medium_observation_design_review_pack.md`](spec/synth_medium_observation_design_review_pack.md):
+  synthetic-only synth-medium observation-design review-pack specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -1011,6 +1013,62 @@ observations, reconstruct extirpation times, fit parameters, infer posteriors,
 run ABC/POM/likelihood/MCMC workflows, analyse real data, or start the next
 goal.
 
+## Implemented synth-medium observation-design review pack
+
+The repository now includes a deterministic, synthetic-only observation-design
+review pack over the accepted Goal 018 latent truth. It emits response-only
+prey observation records for a labelled full-observability benchmark, a
+structured imperfect default regime, and a sparse low-information stress
+regime. The default regime is the human-review target; the full-observability
+regime is only an unrealistic upper-bound benchmark.
+
+The main observation-design entrypoints are:
+
+- [`src/spatext/synth/medium/observations.py`](src/spatext/synth/medium/observations.py):
+  observation-regime definitions, deterministic survey/response generation,
+  audit-table generation, SVG rendering, verification, and report rendering
+- [`scripts/build_synth_medium_observation_design.py`](scripts/build_synth_medium_observation_design.py):
+  command-line utility for emitting the observation-design review bundle
+
+To build the observation-design review pack:
+
+```bash
+uv run python scripts/build_synth_medium_observation_design.py
+```
+
+That command writes `artifacts/synth_medium_observation_design/` containing:
+
+- `observation_design_config.json`
+- `regime_summary.csv`
+- `survey_schedule.csv`
+- `observation_records.csv`
+- `cell_observation_summary.csv`
+- `truth_observation_bridge.csv`
+- `false_negative_summary.csv`
+- `coverage_gap_summary.csv`
+- `effort_by_habitat_region_summary.csv`
+- `recoverability_signal_summary.csv`
+- `verification.json`
+- `report.md`
+- `visuals/survey_effort_surface_default.svg`
+- `visuals/observed_final_response_default.svg`
+- `visuals/truth_observed_mismatch_default.svg`
+- `visuals/post_impact_support_default.svg`
+- `visuals/regime_comparison_montage.svg`
+- `visuals/review_montage.svg`
+
+The selected default regime is `structured_response_observed_default`. It
+produces broad but incomplete coverage (`4411` surveyed passable cells,
+fraction `0.844210526316`), `21258` response-only survey/observation records,
+`2313` false negatives, post-impact support for `3014` true extirpations
+(`0.702727908603`), and detected response changes spanning `108` time units.
+The sparse stress regime is deliberately lower information (`3614` records,
+`4175` false negatives). The recommendation is
+`ready_for_human_observation_design_review`. This review pack does not
+reconstruct extirpation times, build or select a reconstruction rule, fit
+parameters, infer posteriors, run ABC/POM/likelihood/MCMC workflows, analyse
+real data, or start the next goal.
+
 ## Operating stance
 
 The repo is intentionally being built around a few early constraints:
@@ -1071,6 +1129,9 @@ inherit legacy exploratory structure just because it existed elsewhere.
   as a synthetic-only, evaluation-only diagnostic layer testing deterministic
   response-observable target-time rules before any production rule,
   richer-landscape, scoring, candidate, ABC, or POM work.
+- Module 2 `synth-medium` landscape, spread-impact truth, and observation
+  design review packs are implemented as synthetic-only human-review gates
+  before any reconstruction, fitting, inference, or real-data work.
 - The report log in [`spec/report_log.md`](spec/report_log.md) tracks completed
   interactions and implementation milestones.
 - Commits and remote pushes are performed only when explicitly requested.

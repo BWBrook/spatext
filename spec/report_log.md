@@ -2445,6 +2445,294 @@ and the required SVG visual-review files:
   broad sweep, remote compute, commit, push, generated-artifact staging, or
   Goal 019 work was started.
 
+### Interaction 39: Build synth-medium observation-design review pack
+
+#### Request
+
+Execute Goal 019: build a deterministic, synthetic-only observation-design
+review pack over the accepted Goal 018 `synth-medium` spread-impact truth,
+including a labelled full-observability benchmark, a plausible imperfect
+response-only default regime, a sparse stress regime, audit tables, SVG
+visual-review files, and explicit review gates before any reconstruction,
+fitting, inference, real-data, or Goal 020 work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Fetched `origin`, confirmed `main...origin/main` at Goal 018 commit
+  `187b387b`, and created branch
+  `codex/spatext-goal019-synth-medium-observation-design-review` from
+  `origin/main`.
+- Read the Goal 019 delegation, repo-local `AGENTS.md`, README, problem
+  statement, theory, `spec/synth_medium_landscape.md`,
+  `spec/synth_medium_spread_impact_review_pack.md`, Goal 017/018 packet
+  files, `src/spatext/synth/medium/landscape.py`,
+  `src/spatext/synth/medium/spread_impact.py`, and relevant synth-small
+  observation/reconstruction patterns.
+- Added Goal 019 packet:
+  `docs/goals/019-synth-medium-observation-design-review-pack/`.
+- Added `spec/synth_medium_observation_design_review_pack.md`.
+- Added deterministic observation-regime, survey/response generation,
+  audit-table, verification, SVG rendering, and report logic in
+  `src/spatext/synth/medium/observations.py`.
+- Added CLI entrypoint:
+  `scripts/build_synth_medium_observation_design.py`.
+- Exported the observation-design review-pack surface in
+  `src/spatext/synth/medium/__init__.py`.
+- Added focused tests in `tests/test_synth_medium_observation_design.py`.
+- Updated `README.md` and `AGENTS.md` with the observation-design review-pack
+  surface.
+
+#### Observation design
+
+The review pack uses the accepted Goal 018 `balanced_corridor_detour_v2` latent
+truth exactly as the substrate. It emits response-only prey survey and
+observation records for three deterministic regimes:
+
+- `truth_reference_full_observability`: unrealistic benchmark with complete
+  passable-cell coverage and no designed false negatives.
+- `structured_response_observed_default`: selected default with broad but
+  incomplete coverage, uneven effort, imperfect detection, habitat/region
+  effort effects, post-impact gaps, and nonzero false negatives.
+- `sparse_response_observed_stress`: low-information stress regime with fewer
+  records and more false negatives than the default.
+
+The generated bundle is written under:
+
+```text
+artifacts/synth_medium_observation_design/
+```
+
+It emits the required root files:
+
+- `observation_design_config.json`
+- `regime_summary.csv`
+- `survey_schedule.csv`
+- `observation_records.csv`
+- `cell_observation_summary.csv`
+- `truth_observation_bridge.csv`
+- `false_negative_summary.csv`
+- `coverage_gap_summary.csv`
+- `effort_by_habitat_region_summary.csv`
+- `recoverability_signal_summary.csv`
+- `verification.json`
+- `report.md`
+
+and the required SVG visual-review files:
+
+- `visuals/survey_effort_surface_default.svg`
+- `visuals/observed_final_response_default.svg`
+- `visuals/truth_observed_mismatch_default.svg`
+- `visuals/post_impact_support_default.svg`
+- `visuals/regime_comparison_montage.svg`
+- `visuals/review_montage.svg`
+
+#### Validation completed
+
+- RED check:
+  `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+  initially failed because the new `spatext.synth.medium` observation-design
+  API did not exist.
+- Focused Goal 019 tests passed:
+  `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+  (`4` tests).
+- Goal 018 guardrail tests passed:
+  `uv run pytest tests/test_synth_medium_spread_impact.py --no-cov`
+  (`5` tests).
+- Goal 017 guardrail tests passed:
+  `uv run pytest tests/test_synth_medium_landscape.py --no-cov`
+  (`5` tests).
+- Targeted quality checks passed for the new Goal 019 source/test/script
+  surface:
+  - `uv run ruff format src/spatext/synth/medium/observations.py scripts/build_synth_medium_observation_design.py tests/test_synth_medium_observation_design.py`
+  - `uv run ruff check src/spatext/synth/medium/observations.py scripts/build_synth_medium_observation_design.py tests/test_synth_medium_observation_design.py`
+  - `uv run mypy src/spatext/synth/medium/observations.py tests/test_synth_medium_observation_design.py`
+- Full quality checks passed:
+  - `git diff --check`
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`107` tests, coverage `93.54%`)
+  - `uv build`
+- CLI smoke passed:
+  `uv run python scripts/build_synth_medium_observation_design.py`
+  (`18` files written).
+- Generated artifacts and distribution outputs remained ignored
+  (`!! artifacts/`, `!! dist/`).
+
+#### Outcomes
+
+- Source truth reconciliation passed:
+  `6048` total cells, `5225` passable cells, `823` water cells, Goal 018
+  selected default `balanced_corridor_detour_v2`, `4605` final colonized
+  passable cells, and `4289` finite prey quasi-extirpations.
+- Selected default regime:
+  `structured_response_observed_default`.
+- Benchmark regime:
+  `truth_reference_full_observability`, surveyed passable fraction `1.0`,
+  false negatives `0`.
+- Default regime:
+  `21258` survey/observation records, `4411` surveyed passable cells
+  (`0.844210526316`), detection rate `0.275566845423`, `1976` observed
+  response changes, `2313` false negatives, post-impact support count `3014`
+  (`0.702727908603`), and detected response-time range `108`.
+- Sparse stress regime:
+  `3614` survey/observation records, `2106` surveyed passable cells
+  (`0.403062200957`), `4175` false negatives, and post-impact support fraction
+  `0.155280951271`.
+- Recoverability review proxies passed for complete benchmark coverage, default
+  broad uneven coverage, default nonzero false negatives, default post-impact
+  support, default timing signal, default spatial signal, and sparse-stress
+  lower-information contrast.
+- Verification result: passed.
+- Recommendation: `ready_for_human_observation_design_review`.
+- No Goal 017 landscape change, Goal 018 spread-impact truth change,
+  observation-to-extirpation reconstruction, reconstruction rule, synth-small
+  scoring/candidate/class change, ABC, POM, likelihood, MCMC, posterior,
+  parameter recovery, fitting, real-data analysis, broad sweep, remote compute,
+  commit, push, generated-artifact staging, or Goal 020 work was started.
+
+#### Review polish: visual auditability
+
+A narrow review iteration improved the Goal 019 visual artifacts without
+changing the observation regimes, survey probabilities, selected default,
+response-observation records, table schema, or numerical/scientific outcomes.
+
+Changes:
+
+- `visuals/regime_comparison_montage.svg` now uses a readable table-like
+  layout with short metric labels (`Coverage`, `Post-impact support`,
+  `False negatives`, `Detection rate`), visible values, and bars.
+- The default map SVGs now include embedded legend groups:
+  - `visuals/survey_effort_surface_default.svg`
+  - `visuals/observed_final_response_default.svg`
+  - `visuals/truth_observed_mismatch_default.svg`
+  - `visuals/post_impact_support_default.svg`
+- `visuals/review_montage.svg` now includes per-panel legends for the same
+  map semantics.
+- Generated `report.md` now includes a `Visual Decode Keys` section.
+- `spec/synth_medium_observation_design_review_pack.md` and
+  `tests/test_synth_medium_observation_design.py` now require the readable
+  comparison layout and embedded legends.
+
+Focused red-green evidence:
+
+- The new visual-contract test failed against the pre-polish montage because
+  the SVG lacked `Regime comparison table` and short readable labels.
+- After implementation, focused Goal 019 tests passed:
+  `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+  (`5` tests).
+- Regenerated CLI output remained unchanged in the headline values:
+  `21258` default records, `4411` surveyed passable cells, `2313` false
+  negatives, post-impact support fraction `0.702727908603`, recommendation
+  `ready_for_human_observation_design_review`, and `18` files written.
+- Full review-polish validation passed:
+  - `git diff --check`
+  - `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_spread_impact.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_landscape.py --no-cov`
+    (`5` tests)
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`108` tests, coverage `93.56%`)
+  - `uv build`
+  - `uv run python scripts/build_synth_medium_observation_design.py`
+    (`18` files written)
+  - `git status --ignored --short artifacts dist`
+    (`!! artifacts/`, `!! dist/`)
+- No Goal 017 landscape change, Goal 018 truth change, reconstruction, fitting,
+  inference, real-data, broad-sweep, remote-compute, commit, push,
+  generated-artifact staging, or Goal 020 work was performed.
+
+#### Review polish: regime-comparison clipping
+
+A second narrow visual review iteration fixed clipping in
+`visuals/regime_comparison_montage.svg` without changing observation regimes,
+survey probabilities, selected default, table schema, or numerical/scientific
+outcomes.
+
+Changes:
+
+- Widened `regime_comparison_montage.svg` from `1180` to `1440` pixels and
+  matched the `viewBox` width.
+- Rebalanced the comparison table with metric columns starting at `420`,
+  `235`-pixel metric spacing, `132`-pixel bars, and a `1380`-pixel table
+  background inside the viewBox.
+- Strengthened `tests/test_synth_medium_observation_design.py` so the visual
+  contract parses the SVG width/viewBox and checks that estimated text and rect
+  right edges fit inside the width with a `40`-pixel margin.
+- Updated `spec/synth_medium_observation_design_review_pack.md` to require
+  explicit right margin inside the comparison montage viewBox.
+- Preserved the previously added map legends and report decode keys.
+
+Focused red-green evidence:
+
+- The strengthened visual-contract test failed against the pre-fix `1180`
+  width comparison SVG.
+- After the layout fix, focused Goal 019 tests passed:
+  `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+  (`5` tests).
+- Final clipping-fix validation passed:
+  - `git diff --check`
+  - `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_spread_impact.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_landscape.py --no-cov`
+    (`5` tests)
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`108` tests, coverage `93.56%`)
+  - `uv build`
+  - `uv run python scripts/build_synth_medium_observation_design.py`
+    (`18` files written)
+  - `git status --ignored --short artifacts dist`
+    (`!! artifacts/`, `!! dist/`)
+- No Goal 017 landscape change, Goal 018 truth change, reconstruction, fitting,
+  inference, real-data, broad-sweep, remote-compute, commit, push,
+  generated-artifact staging, or Goal 020 work was performed.
+
+#### Review polish: review-montage overlap
+
+A third narrow visual review iteration fixed overlapping legends and lower-row
+panel titles in `visuals/review_montage.svg` without changing observation
+regimes, survey probabilities, selected default, table schemas, or
+numerical/scientific outcomes.
+
+Changes:
+
+- Increased `review_montage.svg` height from `1120` to `1360`.
+- Reworked the montage into explicit two-column panel boxes with row spacing
+  `660`, panel top start `50`, panel box width `560`, map height `432`, and
+  legends placed below each map with reserved space.
+- Added per-panel layout groups with `data-title-y`, `data-map-top`,
+  `data-map-bottom`, `data-legend-top`, `data-legend-bottom`, and
+  `data-panel-bottom` attributes.
+- Strengthened `tests/test_synth_medium_observation_design.py` so it parses
+  those layout attributes and requires title/map/legend ordering plus at least
+  `40` pixels between an upper panel legend and the lower panel title in the
+  same column.
+- Preserved the comparison-table no-clipping test and all map legend/decode
+  semantics.
+- Updated `spec/synth_medium_observation_design_review_pack.md` to require
+  non-overlapping review-montage panel boxes with deterministic layout bounds.
+
+Focused red-green evidence:
+
+- The new review-montage layout test failed against the pre-fix montage because
+  the required panel layout bounds were absent.
+- After the layout fix, focused Goal 019 tests passed:
+  `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+  (`5` tests).
+- No Goal 017 landscape change, Goal 018 truth change, reconstruction, fitting,
+  inference, real-data, broad-sweep, remote-compute, commit, push,
+  generated-artifact staging, or Goal 020 work was performed.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request
