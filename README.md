@@ -110,6 +110,9 @@ Key locations:
 - [`spec/synth_medium_observation_design_counterfactual_screen.md`](spec/synth_medium_observation_design_counterfactual_screen.md):
   synthetic-only synth-medium observation-design recoverability counterfactual
   screen specification
+- [`spec/synth_medium_recoverability_target_observation_design.md`](spec/synth_medium_recoverability_target_observation_design.md):
+  synthetic-only synth-medium recoverability-target observation-design review
+  pack specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -1177,6 +1180,64 @@ field-like regimes and cannot support a field-like readiness claim. This screen
 does not adopt a production observation design or reconstruction rule, fit
 parameters, infer posteriors, run ABC/POM/likelihood/MCMC workflows, analyse
 real data, or use remote compute.
+
+## Implemented synth-medium recoverability-target observation-design review pack
+
+The repository now includes a bounded, deterministic, synthetic-only
+recoverability-target observation-design review pack over the accepted Goal 017
+landscape and Goal 018 spread-impact truth. It preserves the published Goal
+019 default observation design, Goal 020 reconstruction benchmark, and Goal 021
+counterfactual screen as source context, then tests whether a more serious but
+still field-plausible observation regime can make response-time reconstruction
+credible enough for later fitting review.
+
+The main recoverability-target entrypoints are:
+
+- [`src/spatext/synth/medium/recoverability_target_observation_design.py`](src/spatext/synth/medium/recoverability_target_observation_design.py):
+  candidate-regime definitions, response-observable observation support,
+  reused Goal 020 benchmark reconstruction, readiness gates, SVG rendering,
+  verification, and report rendering
+- [`scripts/build_synth_medium_recoverability_target_observation_design.py`](scripts/build_synth_medium_recoverability_target_observation_design.py):
+  command-line utility for emitting the recoverability-target review bundle
+
+To build the recoverability-target review pack:
+
+```bash
+uv run python scripts/build_synth_medium_recoverability_target_observation_design.py
+```
+
+That command writes
+`artifacts/synth_medium_recoverability_target_observation_design/` containing:
+
+- `recoverability_target_config.json`
+- `regime_definitions.csv`
+- `observation_effort_summary.csv`
+- `strata_effort_summary.csv`
+- `reconstruction_benchmark_summary.csv`
+- `support_gap_summary.csv`
+- `baseline_to_candidate_delta.csv`
+- `readiness_decision_summary.csv`
+- `verification.json`
+- `report.md`
+- `visuals/effort_support_surfaces.svg`
+- `visuals/support_gap_maps.svg`
+- `visuals/residual_maps.svg`
+- `visuals/recoverability_decision_montage.svg`
+- `visuals/ceiling_reference_panel.svg`
+
+The candidate set includes the published default baseline, six field-plausible
+response-observable designs, and one unrealistic diagnostic ceiling. Field-like
+candidate survey decisions use landscape strata, scheduled waves, observed
+detection history, and final-absence support gaps; they do not use hidden truth
+to decide where or when to survey. Hidden truth appears only in synthetic audit
+summaries after response-only reconstructions are built.
+
+The decision layer is effort-aware: `readiness_decision_summary.csv` selects the
+best field-plausible candidate by explicit readiness, loss, error, recall, and
+false-positive criteria rather than by regime ID, and separately reports the
+lowest-effort ready candidate. It records survey-record burden relative to both
+the published baseline and the diagnostic ceiling so the positive readiness
+label remains a human logistics-review gate rather than a fitting instruction.
 
 ## Operating stance
 

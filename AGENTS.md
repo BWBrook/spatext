@@ -57,6 +57,8 @@ The working proposition is:
   [`spec/synth_medium_response_reconstruction_benchmark.md`](spec/synth_medium_response_reconstruction_benchmark.md)
   and
   [`spec/synth_medium_observation_design_counterfactual_screen.md`](spec/synth_medium_observation_design_counterfactual_screen.md)
+  and
+  [`spec/synth_medium_recoverability_target_observation_design.md`](spec/synth_medium_recoverability_target_observation_design.md)
 - Operational build history: [`spec/report_log.md`](spec/report_log.md)
 
 During the current phase of the repo, `spec/` is the primary design authority.

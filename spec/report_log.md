@@ -3023,6 +3023,152 @@ adoption, production reconstruction-rule adoption, fitting, inference,
 real-data analysis, remote compute, commit, push, generated-artifact staging,
 publication, or Goal 022 work was performed.
 
+### Interaction 42: Build synth-medium recoverability-target observation design
+
+#### Request
+
+Execute Goal 022: build a bounded, deterministic, synthetic-only
+recoverability-target observation-design review pack over the fixed Goal 017
+landscape and Goal 018 spread-impact truth, preserving the published Goal 019
+default observation design, Goal 020 reconstruction benchmark, and Goal 021
+counterfactual screen.
+
+The goal is diagnostic only: test whether a more serious but still
+field-plausible response-observation regime can make response-time
+reconstruction credible enough for later fitting review, without fitting,
+production observation-design adoption, production reconstruction-rule adoption,
+real-data analysis, broad sweep, remote compute, commit, push, or Goal 023
+work.
+
+#### Actions completed
+
+- Confirmed the action repo checkout `/Users/bwbrook/papers/spatext` was clean
+  on `main...origin/main`.
+- Created branch
+  `codex/spatext-goal022-recoverability-target-observation-design` from
+  `origin/main`.
+- Read repo-local `AGENTS.md`, README, Goal 019-021 specs, and the
+  synth-medium observation, response-reconstruction, and counterfactual modules.
+- Added Goal 022 packet:
+  `docs/goals/022-synth-medium-recoverability-target-observation-design-review-pack/`.
+- Added
+  `spec/synth_medium_recoverability_target_observation_design.md`.
+- Added deterministic recoverability-target observation-design logic in
+  `src/spatext/synth/medium/recoverability_target_observation_design.py`.
+- Added CLI entrypoint:
+  `scripts/build_synth_medium_recoverability_target_observation_design.py`.
+- Exported the new surface in `src/spatext/synth/medium/__init__.py`.
+- Added focused tests in
+  `tests/test_synth_medium_recoverability_target_observation_design.py`.
+- Updated README and AGENTS with the new synth-medium review pack.
+
+#### Candidate design
+
+The review pack compares:
+
+- published baseline `structured_response_observed_default`
+- field-plausible `stratified_scheduled_panel`
+- field-plausible `weak_strata_targeted_panel`
+- field-plausible `post_detection_confirmation_panel`
+- field-plausible `final_absence_revisit_panel`
+- field-plausible `high_cadence_rotating_panel`
+- field-plausible `integrated_recoverability_target_panel`
+- diagnostic ceiling `near_perfect_response_observation_ceiling`
+
+The field-plausible candidates use response-observable survey-design inputs:
+landscape strata, scheduled waves, observed detection history, and final-absence
+support gaps. Hidden truth is used only after the fact in synthetic audit
+summaries.
+
+#### Validation and outcome
+
+- RED check:
+  `uv run pytest tests/test_synth_medium_recoverability_target_observation_design.py --no-cov`
+  initially failed because the Goal 022 exports did not exist.
+- Focused Goal 022 tests now pass:
+  `uv run pytest tests/test_synth_medium_recoverability_target_observation_design.py --no-cov`
+  (`5` tests).
+
+Deterministic outcome:
+
+- baseline `structured_response_observed_default` /
+  `final_absence_run_1`: finite recall `0.524364653765`, `2040` false
+  negatives, `304` false positives, `809` large timing errors
+- best field-plausible candidate:
+  `integrated_recoverability_target_panel` / `final_absence_run_2`
+- best field-plausible finite recall: `0.881557472604`
+- best field-plausible false negatives: `508`
+- best field-plausible false positives: `239`
+- best field-plausible large timing errors: `608`
+- diagnostic ceiling false negatives: `0`
+- recommendation: `recoverability_review_ready`
+
+Validation completed:
+
+- `git status --short --branch --untracked-files=all`
+- `git diff --check`
+- `uv run pytest tests/test_synth_medium_recoverability_target_observation_design.py --no-cov`
+  (`5` tests)
+- `uv run pytest tests/test_synth_medium_observation_design_counterfactual_screen.py --no-cov`
+  (`5` tests)
+- `uv run pytest tests/test_synth_medium_response_reconstruction_benchmark.py --no-cov`
+  (`5` tests)
+- `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+  (`5` tests)
+- `uv run pytest tests/test_synth_medium_spread_impact.py --no-cov`
+  (`5` tests)
+- `uv run pytest tests/test_synth_medium_landscape.py --no-cov`
+  (`5` tests)
+- `uv run ruff format --check .`
+- `uv run ruff check .`
+- `uv run mypy src tests`
+- `uv run pytest` (`123` tests, coverage `93.83%`)
+- `uv build`
+- `uv run python scripts/build_synth_medium_recoverability_target_observation_design.py`
+  (`15` files written)
+- `git status --ignored --short artifacts dist`
+  (`!! artifacts/`, `!! dist/`)
+
+Generated artifact bundle:
+
+```text
+artifacts/synth_medium_recoverability_target_observation_design/
+```
+
+Final CLI outcome:
+
+- baseline regime: `structured_response_observed_default`
+- baseline primary rule: `final_absence_run_1`
+- candidate regime count: `8`
+- rule count: `3`
+- best field-plausible regime: `integrated_recoverability_target_panel`
+- best field-plausible rule: `final_absence_run_2`
+- best field-plausible finite recall: `0.881557472604`
+- best field-plausible false negatives: `508`
+- ceiling finite recall: `1.0`
+- ceiling false negatives: `0`
+- decision recommendation: `recoverability_review_ready`
+
+Review-iteration polish added effort-aware decision accounting:
+
+- Best field-plausible selection is now criterion-driven rather than
+  `integrated_recoverability_target_panel` ID-driven: readiness class, lower
+  loss, lower false negatives, lower large errors, higher finite recall, lower
+  false positives, and stable regime ID.
+- `readiness_decision_summary.csv` now separates best-performing ready and
+  lowest-effort ready candidates and records survey-record count, deltas/ratios
+  versus baseline and ceiling, surveyed-cell count, and final-absence support
+  count for the baseline, best candidate, lowest-effort ready candidate, and
+  ceiling reference.
+- The decision montage includes a `Records` column so the effort burden is
+  visible in the human review artifact.
+
+Generated artifacts and distribution outputs remained ignored and unstaged.
+No production observation-design adoption, production reconstruction-rule
+adoption, fitting, ABC, POM, likelihood, MCMC, posterior, parameter recovery,
+real-data analysis, broad sweep, remote compute, commit, push, or Goal 023 work
+was performed.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request
