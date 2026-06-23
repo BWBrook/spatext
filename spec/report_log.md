@@ -2857,6 +2857,172 @@ validation ladder is completed.
   analysis, broad sweep, remote compute, commit, push, generated-artifact
   staging, or Goal 021 work was performed.
 
+### Interaction 41: Build synth-medium observation-design counterfactual screen
+
+#### Request
+
+Execute Goal 021: build a deterministic, synthetic-only observation-design
+recoverability counterfactual screen over the fixed Goal 017 landscape and
+Goal 018 spread-impact truth, using the published Goal 019 observation design
+and Goal 020 response-reconstruction benchmark as baseline evidence. Stop for
+orchestrator review before any production observation-design adoption,
+production reconstruction-rule adoption, fitting, inference, real-data,
+remote-compute, or Goal 022 work.
+
+#### Actions completed
+
+- Confirmed the primary action repo checkout:
+  `/Users/bwbrook/papers/spatext`.
+- Confirmed `main...origin/main` at the accepted Goal 020 commit
+  `8b85175164f245e677ff38bba3392625087443ea`, then created branch
+  `codex/spatext-goal021-synth-medium-observation-design-counterfactual-screen`
+  from `origin/main`.
+- Read repo-local `AGENTS.md`, README, Goal 017/018/019/020 specs and logs,
+  and the synth-medium landscape, spread-impact, observation-design, and
+  response-reconstruction modules.
+- Added Goal 021 packet:
+  `docs/goals/021-synth-medium-observation-design-counterfactual-screen/`.
+- Added `spec/synth_medium_observation_design_counterfactual_screen.md`.
+- Added deterministic counterfactual observation-support, reused benchmark
+  reconstruction, support/error/delta, verification, SVG rendering, and report
+  logic in
+  `src/spatext/synth/medium/observation_design_counterfactual_screen.py`.
+- Added CLI entrypoint:
+  `scripts/screen_synth_medium_observation_design_counterfactuals.py`.
+- Exported the counterfactual screen surface in
+  `src/spatext/synth/medium/__init__.py`.
+- Added focused tests in
+  `tests/test_synth_medium_observation_design_counterfactual_screen.py`.
+- Updated `README.md` and `AGENTS.md` with the counterfactual screen surface.
+
+#### Counterfactual design
+
+The screen preserves the published baseline:
+
+- regime `structured_response_observed_default`
+- primary benchmark rule `final_absence_run_1`
+- finite recall `0.524364653765`
+- `2040` false negatives
+- `304` false positives
+- `809` large timing errors
+- baseline recommendation
+  `observation_design_not_recoverable_enough_for_backfitting`
+
+It compares four plausible field-like counterfactuals:
+
+- `post_impact_followup_boost`
+- `final_absence_confirmation_support`
+- `weak_area_targeted_support`
+- `balanced_habitat_region_support`
+
+and one explicitly unrealistic diagnostic ceiling:
+
+- `near_perfect_response_observation_ceiling`
+
+The cross-regime best plausible design is selected by recoverability
+(finite-recall and false-negative reduction) before loss. The ceiling is
+separated from plausible field-like regimes in tables, decision rows, and
+visuals.
+
+#### Current focused validation and CLI outcome
+
+- RED check:
+  `uv run pytest tests/test_synth_medium_observation_design_counterfactual_screen.py --no-cov`
+  initially failed because the Goal 021 API did not exist.
+- Focused Goal 021 tests passed:
+  `uv run pytest tests/test_synth_medium_observation_design_counterfactual_screen.py --no-cov`
+  (`5` tests).
+- CLI smoke passed:
+  `uv run python scripts/screen_synth_medium_observation_design_counterfactuals.py`
+  (`15` files written).
+- Full validation completed:
+  - `git status --short --branch --untracked-files=all`
+  - `git diff --check`
+  - `uv run pytest tests/test_synth_medium_observation_design_counterfactual_screen.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_response_reconstruction_benchmark.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_observation_design.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_spread_impact.py --no-cov`
+    (`5` tests)
+  - `uv run pytest tests/test_synth_medium_landscape.py --no-cov`
+    (`5` tests)
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run mypy src tests`
+  - `uv run pytest` (`118` tests, coverage `93.77%`)
+  - `uv build`
+  - `uv run python scripts/screen_synth_medium_observation_design_counterfactuals.py`
+    (`15` files written)
+  - `git status --ignored --short artifacts dist`
+    (`!! artifacts/`, `!! dist/`)
+
+Generated artifact bundle:
+
+```text
+artifacts/synth_medium_observation_design_counterfactual_screen/
+```
+
+Headline regenerated outcomes:
+
+- Baseline: `structured_response_observed_default` /
+  `final_absence_run_1`, finite recall `0.524364653765`, `2040` false
+  negatives, `304` false positives, median absolute error
+  `16.1861668722`, p90 absolute error `56.5705868251`, `809` large
+  errors, loss `1.89367625628`.
+- Best plausible by recoverability:
+  `final_absence_confirmation_support` / `final_absence_run_1`, finite recall
+  `0.582186989974`, `1792` false negatives, `403` false positives, median
+  absolute error `15.0058585723`, p90 absolute error `56.588358166`, `864`
+  large errors, loss `1.86936751222`.
+- Other plausible best-rule rows:
+  `post_impact_followup_boost` improves loss and large errors but not recall;
+  `weak_area_targeted_support` improves observation support but remains below
+  reconstruction-readiness gates; `balanced_habitat_region_support` remains
+  close to baseline recall.
+- Diagnostic ceiling:
+  `near_perfect_response_observation_ceiling` /
+  `midpoint_after_last_detection`, finite recall `1.0`, `0` false negatives,
+  `0` false positives, median absolute error `2.92925809436`, p90 absolute
+  error `5.37040065744`, `0` large errors, loss `0.066451285388`.
+- Decision recommendation:
+  `only_unrealistic_observation_ceiling_recovers_signal`.
+- Generated artifacts and distribution outputs remained ignored and unstaged.
+- No Goal 017 landscape change, Goal 018 truth change, Goal 019 observation
+  design change, Goal 020 reconstruction benchmark change, production
+  observation-design adoption, production reconstruction-rule adoption, fitting,
+  ABC, POM, likelihood, MCMC, posterior, parameter recovery, real-data
+  analysis, broad sweep, remote compute, commit, push, generated-artifact
+  staging, or Goal 022 work was performed.
+
+#### Review polish: decision-table visual layout
+
+A narrow review iteration fixed a visual-only collision in
+`visuals/recoverability_decision_montage.svg`. The long displayed rule label
+`midpoint_after_last_detection` overlapped the recall column in the rendered
+decision table.
+
+Changes:
+
+- Added a deterministic visual-regression test that estimates decision-table
+  text right edges and requires rule/metric text to remain inside assigned
+  columns.
+- Confirmed the new test failed against the pre-polish SVG because the rule
+  label extended past the safe rule-column boundary.
+- Updated the SVG renderer to use bounded display labels in decision-table
+  cells.
+- Added the explicit display label `midpoint_after_last_det` for the long
+  `midpoint_after_last_detection` rule ID while preserving full rule IDs in
+  the machine-readable ranking and delta tables.
+- Updated the spec with the bounded decision-table visual contract.
+
+No counterfactual definitions, thresholds, reconstruction rules, ranking data,
+recommendation class, numerical outcomes, production observation-design
+adoption, production reconstruction-rule adoption, fitting, inference,
+real-data analysis, remote compute, commit, push, generated-artifact staging,
+publication, or Goal 022 work was performed.
+
 ### Interaction 32: Audit response-reconstruction false negatives
 
 #### Request

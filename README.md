@@ -107,6 +107,9 @@ Key locations:
   synthetic-only synth-medium observation-design review-pack specification
 - [`spec/synth_medium_response_reconstruction_benchmark.md`](spec/synth_medium_response_reconstruction_benchmark.md):
   synthetic-only synth-medium response reconstruction benchmark specification
+- [`spec/synth_medium_observation_design_counterfactual_screen.md`](spec/synth_medium_observation_design_counterfactual_screen.md):
+  synthetic-only synth-medium observation-design recoverability counterfactual
+  screen specification
 - [`spec/tooling_bootstrap.md`](spec/tooling_bootstrap.md): tooling contract
 - [`spec/report_log.md`](spec/report_log.md): running operational log
 - [`src/spatext/`](src/spatext): installable package source
@@ -1122,6 +1125,58 @@ omits hidden truth fields. Truth joins and timing errors are isolated in
 a diagnostic review pack, not production reconstruction-rule adoption, fitting,
 ABC/POM/likelihood/MCMC, posterior inference, parameter recovery, real-data
 analysis, or remote compute.
+
+## Implemented synth-medium observation-design counterfactual screen
+
+The repository now includes a deterministic, synthetic-only observation-design
+recoverability counterfactual screen over the fixed Goal 017 landscape, Goal
+018 spread-impact truth, Goal 019 published observation design, and Goal 020
+response-reconstruction benchmark. It compares the published default against a
+small set of plausible field-like support additions and one clearly labelled
+near-perfect diagnostic ceiling.
+
+The main counterfactual-screen entrypoints are:
+
+- [`src/spatext/synth/medium/observation_design_counterfactual_screen.py`](src/spatext/synth/medium/observation_design_counterfactual_screen.py):
+  counterfactual regime definitions, response-only observation support
+  additions, reused Goal 020 benchmark reconstruction, decision summaries, SVG
+  rendering, verification, and report rendering
+- [`scripts/screen_synth_medium_observation_design_counterfactuals.py`](scripts/screen_synth_medium_observation_design_counterfactuals.py):
+  command-line utility for emitting the counterfactual screen bundle
+
+To build the counterfactual screen review pack:
+
+```bash
+uv run python scripts/screen_synth_medium_observation_design_counterfactuals.py
+```
+
+That command writes
+`artifacts/synth_medium_observation_design_counterfactual_screen/` containing:
+
+- `counterfactual_screen_config.json`
+- `counterfactual_regime_definitions.csv`
+- `counterfactual_observation_summary.csv`
+- `counterfactual_reconstruction_rankings.csv`
+- `counterfactual_support_gap_summary.csv`
+- `counterfactual_error_summary.csv`
+- `baseline_to_counterfactual_delta.csv`
+- `recoverability_decision_summary.csv`
+- `verification.json`
+- `report.md`
+- `visuals/recoverability_decision_montage.svg`
+- `visuals/support_gap_comparison_montage.svg`
+- `visuals/residual_comparison_baseline_best.svg`
+- `visuals/baseline_to_best_plausible_delta.svg`
+- `visuals/ceiling_comparison_panel.svg`
+
+The baseline reconciles exactly to the published Goal 020 result:
+`structured_response_observed_default` under `final_absence_run_1`, finite
+recall `0.524364653765`, `2040` false negatives, `304` false positives, and
+`809` large timing errors. The near-perfect ceiling is separated from plausible
+field-like regimes and cannot support a field-like readiness claim. This screen
+does not adopt a production observation design or reconstruction rule, fit
+parameters, infer posteriors, run ABC/POM/likelihood/MCMC workflows, analyse
+real data, or use remote compute.
 
 ## Operating stance
 
