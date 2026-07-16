@@ -1,0 +1,11 @@
+{
+  "arrival_sha256": "5f05f4306cda88cdf38027fdfe030ff05956cabaea848d6a7454c717c668f4ba",
+  "independent_check_arrival_sha256": "5f05f4306cda88cdf38027fdfe030ff05956cabaea848d6a7454c717c668f4ba",
+  "independent_check_landscape_sha256": "53900537f590feb14c76a6e3936a4ec1047dd59b503b2bb3236c015d2859403a",
+  "landscape_sha256": "53900537f590feb14c76a6e3936a4ec1047dd59b503b2bb3236c015d2859403a",
+  "parameter_set_id": "balanced_corridor_detour_v2",
+  "passed": true,
+  "schema_version": "1.0",
+  "serialization_contract": "UTF-8 with LF endings; one header row; rows sorted by integer cell_id; csv.writer with lineterminator=\"\\n\"; floats use format(value, \".12g\"); nonfinite arrival is empty; landscape columns are cell_id,row,col,passability,habitat_class,quality; arrival columns are cell_id,predator_arrival_time",
+  "source_commit": "53462d0365babf2c8070714a930f69b4071af276"
+}
