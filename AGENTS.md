@@ -1,10 +1,38 @@
 # AGENTS.md
 
-This file is the repo-local operating guide for `spatext`. It should evolve as
-the repository matures. Repo-local instructions here override the machine-wide
-defaults where relevant.
+This file is the repo-local archive guide for `spatext`. Repo-local
+instructions here override machine-wide defaults where relevant.
 
-## Purpose
+## Archive mode
+
+Goal 022 at commit `53462d0365babf2c8070714a930f69b4071af276` is the last
+accepted scientific checkpoint. After the single documentation-only archival
+administration commit, treat `main` as read-only. The blocked Goal 023 work is
+preserved separately on
+`archive/goal023-latent-response-observation-gate`; it is not accepted or
+published. Active development continues in the private successor programme,
+`BWBrook/latent-landscapes`.
+
+Permitted work in this repository is limited to:
+
+- read-only inspection; and
+- explicitly authorized, bounded provenance extraction that preserves source
+  identity and reports the exact material extracted.
+
+Do not:
+
+- add or change scientific implementation, specifications, tests, or
+  dependencies;
+- create new goal packets or extend an unfinished goal;
+- run workflows that create generated outputs, artifacts, caches, builds, or
+  environments; or
+- commit, push, tag, publish, or otherwise expose repository content without
+  separate explicit authorization.
+
+The historical sections below describe the archived repository. They do not
+authorize renewed implementation.
+
+## Historical purpose
 
 `spatext` exists to support response-only spatiotemporal extinction inference.
 The scientific framing lives first in [`spec/problem_statement.md`](spec/problem_statement.md).
@@ -16,7 +44,7 @@ The working proposition is:
 > limitations, validates recoverability under synthetic truth, and treats
 > low-information failure as part of the scientific result.
 
-## Current authoritative documents
+## Historical authoritative documents
 
 - Scientific framing: [`spec/problem_statement.md`](spec/problem_statement.md)
 - Mathematical theory: [`spec/theory.md`](spec/theory.md)
@@ -61,17 +89,17 @@ The working proposition is:
   [`spec/synth_medium_recoverability_target_observation_design.md`](spec/synth_medium_recoverability_target_observation_design.md)
 - Operational build history: [`spec/report_log.md`](spec/report_log.md)
 
-During the current phase of the repo, `spec/` is the primary design authority.
-Implementation should follow these documents rather than inventing parallel
-plans.
+During active development, `spec/` was the primary design authority. These
+documents now remain historical contracts, not instructions to resume
+implementation.
 
-## Working roles
+## Historical working roles
 
 - The user provides short task prompts and higher-level direction through spec
   documents and repo discussion.
 - The code architect agent is referred to in repo docs as `spat`.
 
-## Operating principles
+## Historical operating principles
 
 - Keep scientific specification separate from implementation details.
 - Prefer modular, auditable components over exploratory script piles.
@@ -82,7 +110,7 @@ plans.
 - Treat negative or weak-information results as legitimate scientific outcomes,
   not hidden failures.
 
-## Repo workflow
+## Historical repository workflow
 
 - Use `uv` as the single Python environment and dependency authority.
 - Use `pyproject.toml` as the single packaging and metadata authority.
@@ -103,43 +131,18 @@ plans.
   otherwise.
 - Do not revert user changes unless explicitly instructed.
 
-## Quality expectations
+## Archive verification
 
-Before declaring substantial work complete, prefer to run the relevant subset
-of:
+Do not rerun scientific tests, builds, artifact generation, or environment
+setup as routine archive work. For an explicitly authorized provenance
+extraction or archive-administration change, use only the read-only or
+documentation checks named in that authorization and report exactly what was
+run.
 
-```bash
-uv sync --all-groups
-uv run ruff format --check .
-uv run ruff check .
-uv run mypy src tests
-uv run pytest
-uv build
-uv run pre-commit run --all-files
-```
+## Archive records
 
-Run only what is proportionate to the change, but do not claim verification
-that was not actually performed.
-
-## Documentation maintenance
-
-- Update [`spec/report_log.md`](spec/report_log.md) as meaningful interactions
-  are completed so the repo keeps an auditable progress log.
-- Treat `README.md` as the public orientation document for the current state of
-  the repository.
-- After substantial implementation work, review both `README.md` and
-  `AGENTS.md` and update them if the repo's behavior, commands, workflow, or
-  documented module state has changed.
-- Add new spec files in `spec/` when decisions need durable rationale or
-  explicit implementation contracts.
-
-## Phase-0 status
-
-The repo is currently in early bootstrap. Optimize for:
-
-- clean package structure,
-- explicit contracts,
-- reproducible tooling,
-- auditable workflow,
-- low-friction evolution into simulation, inference, summaries, diagnostics,
-  and case-study applications.
+- [`README.md`](README.md) is the public archive orientation.
+- [`docs/archive_status.md`](docs/archive_status.md) records the transition,
+  accepted endpoint, archival branch, planned tag, and successor programme.
+- Existing goal packets and [`spec/report_log.md`](spec/report_log.md) remain
+  historical provenance and must not be extended.
