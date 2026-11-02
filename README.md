@@ -1,5 +1,7 @@
 # spatext
 
+> **Status:** developed in the open as a working record. This is work in progress: contents may change, and nothing here is peer-reviewed unless stated.
+
 ## Archived Scientific Notebook
 
 This repository is the archived exploratory predecessor of
